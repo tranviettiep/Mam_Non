@@ -22,7 +22,7 @@ export function exportStandaloneGameHtml(lesson: LessonConfig): void {
 
   const isDevServer = Boolean(document.querySelector('script[src*="/@vite/client"]'));
   if (isDevServer) {
-    fetch('/standalone-template.html')
+    fetch('./standalone-template.html')
       .then((res) => {
         if (!res.ok) throw new Error('No prebuilt standalone template');
         return res.text();

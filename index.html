@@ -20,7 +20,9 @@
         !document.querySelector('script[src*="/@vite/client"]') &&
         document.querySelector('script[src="/src/main.tsx"]')
       ) {
-        window.location.replace('./San_Choi_Chu_Cai.html');
+        window.location.replace(
+          './San_Choi_Chu_Cai.html' + window.location.search + window.location.hash
+        );
       }
     </script>
   </body>

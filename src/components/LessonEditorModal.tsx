@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Check, Download, Mic, Plus, RotateCcw, Square, Trash2, Volume2, X } from 'lucide-react';
+import { Check, Download, Mic, Plus, RotateCcw, Share2, Square, Trash2, Volume2, X } from 'lucide-react';
 import { LessonConfig, QuizQuestion } from '../types/lesson';
 import { AVAILABLE_TRACING_LETTERS } from '../data/strokes';
-import { LESSON_PRESETS, syncGreetingWithClassInfo } from '../data/lessons';
+import { copyShareableLessonUrl, LESSON_PRESETS, syncGreetingWithClassInfo } from '../data/lessons';
 import { audioManager } from '../utils/audio';
 
 interface LessonEditorModalProps {
@@ -23,6 +23,7 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
   const [draft, setDraft] = useState<LessonConfig>(() => structuredClone(lesson));
   const [tab, setTab] = useState<'general' | 'questions'>('general');
   const [recordingKey, setRecordingKey] = useState<string | null>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   const recorderRef = useRef<MediaRecorder | null>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
@@ -478,10 +479,27 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
             className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 hover:bg-slate-100"
           >
             <RotateCcw className="h-4 w-4" />
-            Khôi phục bài mẫu 5C5 (e, ê)
+            Khôi phục mặc định (e, ê)
           </button>
 
           <div className="flex flex-wrap items-center gap-2.5">
+            <button
+              type="button"
+              onClick={async () => {
+                stopActiveRecording();
+                onSave(draft);
+                await copyShareableLessonUrl(draft);
+                setCopiedLink(true);
+                window.setTimeout(() => setCopiedLink(false), 2500);
+              }}
+              className={`flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2.5 font-heading text-base font-bold text-white shadow transition ${
+                copiedLink ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-sky-600 hover:bg-sky-500'
+              }`}
+            >
+              {copiedLink ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
+              {copiedLink ? 'Đã sao chép link!' : 'Lưu & Chép link chia sẻ'}
+            </button>
+
             <button
               type="button"
               onClick={() => {

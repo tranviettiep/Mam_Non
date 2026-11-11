@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Camera,
+  Check,
   Download,
   Edit3,
   Footprints,
@@ -8,13 +9,14 @@ import {
   PenTool,
   PhoneCall,
   Play,
+  Share2,
   Sliders,
   Sparkles,
   Volume2,
   VolumeX,
 } from 'lucide-react';
 import { ActiveScreen, LessonConfig } from '../types/lesson';
-import { LESSON_PRESETS } from '../data/lessons';
+import { copyShareableLessonUrl, LESSON_PRESETS } from '../data/lessons';
 import { audioManager } from '../utils/audio';
 
 interface HubScreenProps {
@@ -38,6 +40,15 @@ export const HubScreen: React.FC<HubScreenProps> = ({
   onOpenVoiceSettings,
   onExportHtml,
 }) => {
+  const [copiedShare, setCopiedShare] = useState(false);
+
+  const handleCopyShareLink = async () => {
+    audioManager.playClick();
+    await copyShareableLessonUrl(lesson);
+    setCopiedShare(true);
+    window.setTimeout(() => setCopiedShare(false), 2500);
+  };
+
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen?.().catch(() => {});
@@ -217,6 +228,17 @@ export const HubScreen: React.FC<HubScreenProps> = ({
         >
           <Edit3 className="h-4 w-4" />
           Chỉnh sửa bài học
+        </button>
+
+        <button
+          type="button"
+          onClick={handleCopyShareLink}
+          className={`flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 font-heading text-base font-bold text-white transition ${
+            copiedShare ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-sky-600 hover:bg-sky-500'
+          }`}
+        >
+          {copiedShare ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
+          {copiedShare ? 'Đã chép link!' : 'Chia sẻ link'}
         </button>
 
         <button

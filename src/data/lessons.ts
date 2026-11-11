@@ -1,15 +1,17 @@
 import { LessonConfig } from '../types/lesson';
 
+const DEFAULT_PUBLIC_SHARE_BASE = 'https://tranviettiep.github.io/Mam_Non/';
+
 export const LESSON_PRESETS: LessonConfig[] = [
   {
     id: 'lesson-e-ehat',
     title: 'Sân Chơi Chữ Cái',
-    schoolName: 'TRƯỜNG MẦM NON LIÊN MINH',
-    className: 'Lớp 5C5',
-    teacherNames: 'cô Thương và cô Thùy',
+    schoolName: 'TRƯỜNG MẦM NON THÀNH LỢI',
+    className: 'Lớp 5 Tuổi',
+    teacherNames: 'cô Mơ',
     targetLetters: ['e', 'ê'],
     secretCallGreeting:
-      'Xin chào cô Thương, cô Thùy và các bạn nhỏ lớp 5C5! Chúng tớ là chữ e và chữ ê đây! Hôm nay chúng tớ mang đến ba chặng thử thách siêu vui, các bạn nhỏ đã sẵn sàng chinh phục cùng chúng tớ chưa nào?',
+      'Xin chào cô Mơ và các bạn nhỏ lớp 5 Tuổi! Chúng tớ là chữ e và chữ ê đây! Hôm nay chúng tớ mang đến ba chặng thử thách siêu vui, các bạn nhỏ đã sẵn sàng chinh phục cùng chúng tớ chưa nào?',
     runnerLetters: ['e', 'ê', 'E', 'Ê'],
     questions: [
       { id: 'q1', prompt: 'Đâu là chữ e in thường?', leftOption: 'e', rightOption: 'ê', correctSide: 'left' },
@@ -27,12 +29,12 @@ export const LESSON_PRESETS: LessonConfig[] = [
   {
     id: 'lesson-o-group',
     title: 'Sân Chơi Chữ Cái',
-    schoolName: 'TRƯỜNG MẦM NON LIÊN MINH',
-    className: 'Lớp 5C5',
-    teacherNames: 'cô giáo',
+    schoolName: 'TRƯỜNG MẦM NON THÀNH LỢI',
+    className: 'Lớp 5 Tuổi',
+    teacherNames: 'cô Mơ',
     targetLetters: ['o', 'ô', 'ơ'],
     secretCallGreeting:
-      'Xin chào cô giáo và các bạn nhỏ đáng yêu! Gia đình chữ tròn o, ô, ơ xin chào cả lớp! Các bạn đã sẵn sàng vượt qua ba chặng thử thách hôm nay chưa nào?',
+      'Xin chào cô Mơ và các bạn nhỏ lớp 5 Tuổi! Gia đình chữ tròn o, ô, ơ xin chào cả lớp! Các bạn đã sẵn sàng vượt qua ba chặng thử thách hôm nay chưa nào?',
     runnerLetters: ['o', 'ô', 'ơ', 'O', 'Ô', 'Ơ'],
     questions: [
       { id: 'o1', prompt: 'Đâu là chữ o in thường?', leftOption: 'o', rightOption: 'ô', correctSide: 'left' },
@@ -50,12 +52,12 @@ export const LESSON_PRESETS: LessonConfig[] = [
   {
     id: 'lesson-a-group',
     title: 'Sân Chơi Chữ Cái',
-    schoolName: 'TRƯỜNG MẦM NON LIÊN MINH',
-    className: 'Lớp 5C5',
-    teacherNames: 'cô giáo',
+    schoolName: 'TRƯỜNG MẦM NON THÀNH LỢI',
+    className: 'Lớp 5 Tuổi',
+    teacherNames: 'cô Mơ',
     targetLetters: ['a', 'ă', 'â'],
     secretCallGreeting:
-      'Xin chào cô giáo và các bạn nhỏ! Ba anh em chữ a, ă, â rất vui được gặp lớp mình hôm nay. Cả lớp cùng sẵn sàng tham gia sân chơi chữ cái nhé!',
+      'Xin chào cô Mơ và các bạn nhỏ lớp 5 Tuổi! Ba anh em chữ a, ă, â rất vui được gặp lớp mình hôm nay. Cả lớp cùng sẵn sàng tham gia sân chơi chữ cái nhé!',
     runnerLetters: ['a', 'ă', 'â', 'A', 'Ă', 'Â'],
     questions: [
       { id: 'a1', prompt: 'Đâu là chữ a in thường?', leftOption: 'a', rightOption: 'ă', correctSide: 'left' },
@@ -73,12 +75,12 @@ export const LESSON_PRESETS: LessonConfig[] = [
   {
     id: 'lesson-u-group',
     title: 'Sân Chơi Chữ Cái',
-    schoolName: 'TRƯỜNG MẦM NON LIÊN MINH',
-    className: 'Lớp 5C5',
-    teacherNames: 'cô giáo',
+    schoolName: 'TRƯỜNG MẦM NON THÀNH LỢI',
+    className: 'Lớp 5 Tuổi',
+    teacherNames: 'cô Mơ',
     targetLetters: ['u', 'ư'],
     secretCallGreeting:
-      'Xin chào cô giáo và các bạn nhỏ! Đôi bạn chữ u và chữ ư đã tới lớp mình rồi đây! Chúng mình cùng bắt đầu thử thách ngay nhé!',
+      'Xin chào cô Mơ và các bạn nhỏ lớp 5 Tuổi! Đôi bạn chữ u và chữ ư đã tới lớp mình rồi đây! Chúng mình cùng bắt đầu thử thách ngay nhé!',
     runnerLetters: ['u', 'ư', 'U', 'Ư'],
     questions: [
       { id: 'u1', prompt: 'Đâu là chữ u in thường?', leftOption: 'u', rightOption: 'ư', correctSide: 'left' },
@@ -96,12 +98,12 @@ export const LESSON_PRESETS: LessonConfig[] = [
   {
     id: 'lesson-bdd-group',
     title: 'Sân Chơi Chữ Cái',
-    schoolName: 'TRƯỜNG MẦM NON LIÊN MINH',
-    className: 'Lớp 5C5',
-    teacherNames: 'cô giáo',
+    schoolName: 'TRƯỜNG MẦM NON THÀNH LỢI',
+    className: 'Lớp 5 Tuổi',
+    teacherNames: 'cô Mơ',
     targetLetters: ['b', 'd', 'đ'],
     secretCallGreeting:
-      'Xin chào cô giáo và các bạn nhỏ! Nhóm bạn chữ b, d, đ rất háo hức được vui học cùng lớp mình hôm nay. Các bạn đã sẵn sàng chưa?',
+      'Xin chào cô Mơ và các bạn nhỏ lớp 5 Tuổi! Nhóm bạn chữ b, d, đ rất háo hức được vui học cùng lớp mình hôm nay. Các bạn đã sẵn sàng chưa?',
     runnerLetters: ['b', 'd', 'đ', 'B', 'D', 'Đ'],
     questions: [
       { id: 'b1', prompt: 'Chữ nào có nét sổ thẳng bên trái?', leftOption: 'b', rightOption: 'd', correctSide: 'left' },
@@ -118,7 +120,8 @@ export const LESSON_PRESETS: LessonConfig[] = [
   },
 ];
 
-const STORAGE_KEY = 'mam_non_active_lesson_v1';
+const STORAGE_KEY = 'mam_non_active_lesson_v2';
+const LEGACY_STORAGE_KEY = 'mam_non_active_lesson_v1';
 
 export function buildGreetingSalutation(teacherNames: string, className: string): string {
   const teacher = teacherNames.trim() || 'cô giáo';
@@ -168,6 +171,156 @@ export function syncGreetingWithClassInfo(
   return next;
 }
 
+function encodeUtf8Base64Url(str: string): string {
+  const bytes = new TextEncoder().encode(str);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function decodeUtf8Base64Url(b64url: string): string {
+  const padded = b64url.replace(/-/g, '+').replace(/_/g, '/');
+  const padLen = (4 - (padded.length % 4)) % 4;
+  const binary = atob(padded + '='.repeat(padLen));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return new TextDecoder().decode(bytes);
+}
+
+function findMatchingPresetIfQuestionsUnchanged(lesson: LessonConfig): LessonConfig | undefined {
+  const candidate =
+    LESSON_PRESETS.find((p) => p.id === lesson.id) ??
+    LESSON_PRESETS.find((p) => p.targetLetters.join(',') === lesson.targetLetters.join(','));
+  if (!candidate) return undefined;
+  if (lesson.targetLetters.join(',') !== candidate.targetLetters.join(',')) return undefined;
+  if (lesson.questions.length !== candidate.questions.length) return undefined;
+
+  for (let i = 0; i < candidate.questions.length; i++) {
+    const a = lesson.questions[i];
+    const b = candidate.questions[i];
+    if (
+      a.prompt !== b.prompt ||
+      a.leftOption !== b.leftOption ||
+      a.rightOption !== b.rightOption ||
+      a.correctSide !== b.correctSide
+    ) {
+      return undefined;
+    }
+  }
+
+  const expectedGreeting = syncGreetingWithClassInfo(
+    candidate.secretCallGreeting,
+    lesson.teacherNames,
+    lesson.className
+  );
+  if (lesson.secretCallGreeting.trim() !== expectedGreeting.trim()) {
+    return undefined;
+  }
+
+  return candidate;
+}
+
+function getShareBaseUrl(): string {
+  if (typeof window === 'undefined' || window.location.protocol === 'file:') {
+    return DEFAULT_PUBLIC_SHARE_BASE;
+  }
+  const cleanPath = window.location.pathname.replace(/\/San_Choi_Chu_Cai\.html$/i, '/');
+  return `${window.location.origin}${cleanPath}`;
+}
+
+export function buildShareableLessonUrl(lesson: LessonConfig): string {
+  const url = new URL(getShareBaseUrl());
+  const matchedPreset = findMatchingPresetIfQuestionsUnchanged(lesson);
+  const def = LESSON_PRESETS[0];
+
+  if (matchedPreset) {
+    if (matchedPreset.id !== def.id) {
+      url.searchParams.set('p', matchedPreset.id);
+    }
+    if (lesson.schoolName.trim() !== def.schoolName) {
+      url.searchParams.set('truong', lesson.schoolName.trim());
+    }
+    if (lesson.className.trim() !== def.className) {
+      url.searchParams.set('lop', lesson.className.trim());
+    }
+    if (lesson.teacherNames.trim() !== def.teacherNames) {
+      url.searchParams.set('co', lesson.teacherNames.trim());
+    }
+    return url.toString();
+  }
+
+  // Trường hợp cô giáo đã tự sửa bộ câu hỏi hoặc lời chào riêng -> nén toàn bộ cấu hình lên link
+  const stripped: LessonConfig = {
+    ...lesson,
+    secretCallCustomAudioUrl: undefined,
+    questions: lesson.questions.map(({ customAudioUrl: _omit, ...rest }) => rest),
+  };
+  url.searchParams.set('bai', encodeUtf8Base64Url(JSON.stringify(stripped)));
+  return url.toString();
+}
+
+export async function copyShareableLessonUrl(lesson: LessonConfig): Promise<string> {
+  const shareUrl = buildShareableLessonUrl(lesson);
+  if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      return shareUrl;
+    } catch {
+      // fallback below
+    }
+  }
+  if (typeof document !== 'undefined') {
+    const ta = document.createElement('textarea');
+    ta.value = shareUrl;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+  return shareUrl;
+}
+
+function tryLoadLessonFromUrl(): LessonConfig | null {
+  if (typeof window === 'undefined' || !window.location.search) return null;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const encodedBai = params.get('bai');
+    if (encodedBai) {
+      const parsed = JSON.parse(decodeUtf8Base64Url(encodedBai));
+      if (parsed && parsed.id && Array.isArray(parsed.questions)) {
+        return normalizeLoadedLesson(parsed as LessonConfig);
+      }
+    }
+
+    const hasQuickParams =
+      params.has('p') || params.has('truong') || params.has('lop') || params.has('co');
+    if (hasQuickParams) {
+      const presetId = params.get('p');
+      const base = structuredClone(
+        LESSON_PRESETS.find((p) => p.id === presetId) ?? LESSON_PRESETS[0]
+      );
+      if (params.has('truong')) base.schoolName = params.get('truong') || base.schoolName;
+      if (params.has('lop')) base.className = params.get('lop') || base.className;
+      if (params.has('co')) base.teacherNames = params.get('co') || base.teacherNames;
+      base.secretCallGreeting = syncGreetingWithClassInfo(
+        base.secretCallGreeting,
+        base.teacherNames,
+        base.className
+      );
+      return base;
+    }
+  } catch {
+    // ignore malformed URL params
+  }
+  return null;
+}
+
 function normalizeLoadedLesson(lesson: LessonConfig): LessonConfig {
   if (!lesson.secretCallCustomAudioUrl) {
     return {
@@ -183,6 +336,21 @@ function normalizeLoadedLesson(lesson: LessonConfig): LessonConfig {
 }
 
 export function loadInitialLesson(): LessonConfig {
+  // 1. Ưu tiên cao nhất: Cấu hình được chia sẻ qua đường link URL (?bai=... hoặc ?truong=...&lop=...&co=...)
+  const fromUrl = tryLoadLessonFromUrl();
+  if (fromUrl) {
+    saveLessonToStorage(fromUrl);
+    if (
+      typeof window !== 'undefined' &&
+      window.location.protocol.startsWith('http') &&
+      window.history?.replaceState
+    ) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.hash);
+    }
+    return fromUrl;
+  }
+
+  // 2. File .html độc lập đã nhúng sẵn bài học
   if (typeof document !== 'undefined') {
     const embeddedEl = document.getElementById('embedded-lesson-config');
     if (embeddedEl && embeddedEl.textContent) {
@@ -197,15 +365,30 @@ export function loadInitialLesson(): LessonConfig {
     }
   }
 
+  // 3. Bộ nhớ trình duyệt trên máy hiện tại
   if (typeof localStorage !== 'undefined') {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
+      const rawV2 = localStorage.getItem(STORAGE_KEY);
+      if (rawV2) {
+        const parsed = JSON.parse(rawV2);
         if (parsed && parsed.id && Array.isArray(parsed.questions)) {
-          const normalized = normalizeLoadedLesson(parsed as LessonConfig);
-          saveLessonToStorage(normalized);
-          return normalized;
+          return normalizeLoadedLesson(parsed as LessonConfig);
+        }
+      }
+
+      // Di chuyển dữ liệu tự chỉnh sửa từ v1 sang v2 (bỏ qua nếu v1 chỉ là mặc định cũ Liên Minh)
+      const rawV1 = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (rawV1) {
+        const parsedV1 = JSON.parse(rawV1) as LessonConfig;
+        if (
+          parsedV1 &&
+          parsedV1.id &&
+          Array.isArray(parsedV1.questions) &&
+          parsedV1.schoolName !== 'TRƯỜNG MẦM NON LIÊN MINH'
+        ) {
+          const migrated = normalizeLoadedLesson(parsedV1);
+          saveLessonToStorage(migrated);
+          return migrated;
         }
       }
     } catch {
@@ -213,6 +396,7 @@ export function loadInitialLesson(): LessonConfig {
     }
   }
 
+  // 4. Mặc định gốc: TRƯỜNG MẦM NON THÀNH LỢI - Lớp 5 Tuổi - cô Mơ
   return structuredClone(LESSON_PRESETS[0]);
 }
 

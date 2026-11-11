@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Sân Chơi Chữ Cái Mầm Non</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Lexend:wght@500;600;700;800&family=Quicksand:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="overflow-hidden select-none bg-sky-50 text-slate-900 antialiased">
+    <script id="embedded-lesson-config" type="application/json">null</script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if (window.location.protocol === 'file:' && document.querySelector('script[src="/src/main.tsx"]')) {
+        window.location.replace('./dist/index.html');
+      }
+    </script>
+  </body>
+</html>

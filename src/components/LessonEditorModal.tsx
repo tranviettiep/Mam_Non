@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Check, Download, Mic, Plus, RotateCcw, Square, Trash2, Volume2, X } from 'lucide-react';
 import { LessonConfig, QuizQuestion } from '../types/lesson';
 import { AVAILABLE_TRACING_LETTERS } from '../data/strokes';
-import { LESSON_PRESETS } from '../data/lessons';
+import { LESSON_PRESETS, syncGreetingWithClassInfo } from '../data/lessons';
 import { audioManager } from '../utils/audio';
 
 interface LessonEditorModalProps {
@@ -94,7 +94,17 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
         : [...prev.targetLetters, ch];
       if (nextLetters.length === 0) return prev;
       const runner = [...nextLetters, ...nextLetters.map((x) => x.toUpperCase())];
-      return { ...prev, targetLetters: nextLetters, runnerLetters: runner };
+      return {
+        ...prev,
+        targetLetters: nextLetters,
+        runnerLetters: runner,
+        secretCallGreeting: syncGreetingWithClassInfo(
+          prev.secretCallGreeting,
+          prev.teacherNames,
+          prev.className,
+          nextLetters
+        ),
+      };
     });
   };
 
@@ -198,6 +208,11 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
                           schoolName: draft.schoolName,
                           className: draft.className,
                           teacherNames: draft.teacherNames,
+                          secretCallGreeting: syncGreetingWithClassInfo(
+                            p.secretCallGreeting,
+                            draft.teacherNames,
+                            draft.className
+                          ),
                         })
                       }
                       className="font-letter cursor-pointer rounded-xl border-2 border-blue-300 bg-white px-3.5 py-1.5 text-sm font-extrabold text-blue-800 hover:bg-blue-600 hover:text-white"
@@ -223,7 +238,18 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
                   <input
                     type="text"
                     value={draft.className}
-                    onChange={(e) => setDraft({ ...draft, className: e.target.value })}
+                    onChange={(e) => {
+                      const nextClass = e.target.value;
+                      setDraft((prev) => ({
+                        ...prev,
+                        className: nextClass,
+                        secretCallGreeting: syncGreetingWithClassInfo(
+                          prev.secretCallGreeting,
+                          prev.teacherNames,
+                          nextClass
+                        ),
+                      }));
+                    }}
                     className="mt-1 w-full rounded-xl border-2 border-slate-300 px-3 py-2 font-semibold focus:border-blue-500 focus:outline-none"
                   />
                 </div>
@@ -232,7 +258,18 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
                   <input
                     type="text"
                     value={draft.teacherNames}
-                    onChange={(e) => setDraft({ ...draft, teacherNames: e.target.value })}
+                    onChange={(e) => {
+                      const nextTeacher = e.target.value;
+                      setDraft((prev) => ({
+                        ...prev,
+                        teacherNames: nextTeacher,
+                        secretCallGreeting: syncGreetingWithClassInfo(
+                          prev.secretCallGreeting,
+                          nextTeacher,
+                          prev.className
+                        ),
+                      }));
+                    }}
                     className="mt-1 w-full rounded-xl border-2 border-slate-300 px-3 py-2 font-semibold focus:border-blue-500 focus:outline-none"
                   />
                 </div>
@@ -268,7 +305,25 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
                   <label className="block text-sm font-bold text-slate-700">
                     Lời chào trong màn hình “Cuộc gọi bí mật”:
                   </label>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setDraft((prev) => ({
+                          ...prev,
+                          secretCallGreeting: syncGreetingWithClassInfo(
+                            '',
+                            prev.teacherNames,
+                            prev.className,
+                            prev.targetLetters
+                          ),
+                        }))
+                      }
+                      className="flex cursor-pointer items-center gap-1 rounded-lg border border-blue-300 bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-800 hover:bg-blue-100"
+                    >
+                      <RotateCcw className="h-3.5 w-3.5" />
+                      Tạo theo tên lớp/cô
+                    </button>
                     <button
                       type="button"
                       onClick={() =>

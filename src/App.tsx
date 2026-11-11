@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { ActiveScreen, LessonConfig, VoiceSettings } from './types/lesson';
-import { loadInitialLesson, saveLessonToStorage } from './data/lessons';
+import {
+  loadInitialLesson,
+  saveLessonToStorage,
+  syncGreetingWithClassInfo,
+} from './data/lessons';
 import { audioManager } from './utils/audio';
 import { exportStandaloneGameHtml } from './utils/exportHtml';
 import { SecretCallScreen } from './components/SecretCallScreen';
@@ -41,6 +45,11 @@ export const App: React.FC = () => {
       schoolName: lesson.schoolName,
       className: lesson.className,
       teacherNames: lesson.teacherNames,
+      secretCallGreeting: syncGreetingWithClassInfo(
+        preset.secretCallGreeting,
+        lesson.teacherNames,
+        lesson.className
+      ),
     };
     handleSaveLesson(merged);
   };

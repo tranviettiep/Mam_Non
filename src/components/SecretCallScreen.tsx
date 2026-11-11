@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { PhoneCall, PhoneForwarded, Sliders, Sparkles, Volume2, ArrowRight, RotateCcw } from 'lucide-react';
 import { LessonConfig } from '../types/lesson';
+import { syncGreetingWithClassInfo } from '../data/lessons';
 import { audioManager } from '../utils/audio';
 
 interface SecretCallScreenProps {
@@ -16,6 +17,10 @@ export const SecretCallScreen: React.FC<SecretCallScreenProps> = ({
 }) => {
   const [callState, setCallState] = useState<'idle' | 'ringing' | 'connected'>('idle');
   const [speaking, setSpeaking] = useState(false);
+
+  const effectiveGreeting = lesson.secretCallCustomAudioUrl
+    ? lesson.secretCallGreeting
+    : syncGreetingWithClassInfo(lesson.secretCallGreeting, lesson.teacherNames, lesson.className);
 
   useEffect(() => {
     return () => {
@@ -38,7 +43,7 @@ export const SecretCallScreen: React.FC<SecretCallScreenProps> = ({
     setSpeaking(true);
     window.setTimeout(() => {
       audioManager.speakVi(
-        lesson.secretCallGreeting,
+        effectiveGreeting,
         lesson.secretCallCustomAudioUrl,
         () => {
           setSpeaking(false);
@@ -51,7 +56,7 @@ export const SecretCallScreen: React.FC<SecretCallScreenProps> = ({
   const handleReplayVoice = () => {
     setSpeaking(true);
     audioManager.speakVi(
-      lesson.secretCallGreeting,
+      effectiveGreeting,
       lesson.secretCallCustomAudioUrl,
       () => {
         setSpeaking(false);
@@ -188,7 +193,7 @@ export const SecretCallScreen: React.FC<SecretCallScreenProps> = ({
 
             {/* Speech Bubble */}
             <div className="mt-5 w-full max-w-3xl rounded-3xl border-4 border-sky-200 bg-white px-7 py-5 text-center text-slate-800 shadow-lg">
-              <p className="text-xl font-bold leading-relaxed md:text-2xl">“{lesson.secretCallGreeting}”</p>
+              <p className="text-xl font-bold leading-relaxed md:text-2xl">“{effectiveGreeting}”</p>
             </div>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-4">

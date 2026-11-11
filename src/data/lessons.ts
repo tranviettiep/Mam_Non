@@ -120,6 +120,68 @@ export const LESSON_PRESETS: LessonConfig[] = [
 
 const STORAGE_KEY = 'mam_non_active_lesson_v1';
 
+export function buildGreetingSalutation(teacherNames: string, className: string): string {
+  const teacher = teacherNames.trim() || 'cô giáo';
+  const rawClass = className.trim();
+  if (!rawClass) {
+    return `Xin chào ${teacher} và các bạn nhỏ đáng yêu!`;
+  }
+  const normalizedClass = /^lớp\b/i.test(rawClass)
+    ? `lớp${rawClass.slice(3)}`
+    : `lớp ${rawClass}`;
+  return `Xin chào ${teacher} và các bạn nhỏ ${normalizedClass}!`;
+}
+
+export function syncGreetingWithClassInfo(
+  greeting: string,
+  teacherNames: string,
+  className: string,
+  updatedLetters?: string[]
+): string {
+  const salutation = buildGreetingSalutation(teacherNames, className);
+  const trimmed = (greeting || '').trim();
+
+  if (!trimmed) {
+    const lettersLabel =
+      updatedLetters && updatedLetters.length > 0
+        ? updatedLetters.map((c) => `chữ ${c}`).join(' và ')
+        : 'các bạn chữ cái';
+    return `${salutation} Chúng tớ là ${lettersLabel} đây! Hôm nay chúng tớ mang đến ba chặng thử thách siêu vui, các bạn nhỏ đã sẵn sàng chinh phục cùng chúng tớ chưa nào?`;
+  }
+
+  let next = trimmed;
+  if (/^Xin chào [^!.?]+[!?.]/i.test(next)) {
+    next = next.replace(/^Xin chào [^!.?]+[!?.]/i, salutation);
+  }
+
+  if (updatedLetters && updatedLetters.length > 0) {
+    const lettersText =
+      updatedLetters.length <= 2
+        ? updatedLetters.map((c) => `chữ ${c}`).join(' và ')
+        : `nhóm chữ ${updatedLetters.join(', ')}`;
+    next = next.replace(
+      /(Chúng tớ là |Gia đình chữ tròn |Ba anh em chữ |Đôi bạn chữ |Nhóm bạn chữ )[^!.?]+( đây!| xin chào cả lớp!)/i,
+      `Chúng tớ là ${lettersText} đây!`
+    );
+  }
+
+  return next;
+}
+
+function normalizeLoadedLesson(lesson: LessonConfig): LessonConfig {
+  if (!lesson.secretCallCustomAudioUrl) {
+    return {
+      ...lesson,
+      secretCallGreeting: syncGreetingWithClassInfo(
+        lesson.secretCallGreeting,
+        lesson.teacherNames,
+        lesson.className
+      ),
+    };
+  }
+  return lesson;
+}
+
 export function loadInitialLesson(): LessonConfig {
   if (typeof document !== 'undefined') {
     const embeddedEl = document.getElementById('embedded-lesson-config');
@@ -127,7 +189,7 @@ export function loadInitialLesson(): LessonConfig {
       try {
         const parsed = JSON.parse(embeddedEl.textContent.trim());
         if (parsed && parsed.id && Array.isArray(parsed.questions)) {
-          return parsed as LessonConfig;
+          return normalizeLoadedLesson(parsed as LessonConfig);
         }
       } catch {
         // ignore invalid embedded JSON
@@ -141,7 +203,9 @@ export function loadInitialLesson(): LessonConfig {
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed && parsed.id && Array.isArray(parsed.questions)) {
-          return parsed as LessonConfig;
+          const normalized = normalizeLoadedLesson(parsed as LessonConfig);
+          saveLessonToStorage(normalized);
+          return normalized;
         }
       }
     } catch {

@@ -70,9 +70,9 @@ export function normalizeVietnameseForSpeech(rawText: string): string {
 
   let text = rawText.normalize('NFC').trim();
 
-  // 1. Chuẩn hóa mã lớp học (VD: 5C5 -> năm xê năm, 5A1 -> năm a một, 4B -> bốn bê)
+  // 1. Chuẩn hóa mã lớp học viết liền (VD: 5C5 -> năm xê năm, 5A1 -> năm a một, 4B -> bốn bê)
   text = text.replace(
-    /(^|[^\p{L}\p{N}])(\d)\s*([A-Za-zĐđ])\s*(\d)?(?=$|[^\p{L}\p{N}])/gu,
+    /(^|[^\p{L}\p{N}])(\d)([A-Za-zĐđ])(\d)?(?=$|[^\p{L}\p{N}])/gu,
     (_match, prefix: string, d1: string, letter: string, d2?: string) => {
       const w1 = DIGIT_VI[d1] ?? d1;
       const wLetter = CLASS_CODE_LETTER_MAP[letter.toLowerCase()] ?? letter.toLowerCase();

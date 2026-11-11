@@ -223,18 +223,21 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
           await videoRef.current.play().catch(() => {});
         }
 
-        // Load MediaPipe: local ./mediapipe first on HTTP(S) -> CDN on file:// or fallback
+        // Load MediaPipe: local ./mediapipe -> ./public/mediapipe -> CDN fallback
         let landmarker: FaceLandmarker | null = null;
         if (window.location.protocol !== 'file:') {
-          try {
-            const localVision = await FilesetResolver.forVisionTasks('./mediapipe/wasm');
-            landmarker = await FaceLandmarker.createFromOptions(localVision, {
-              baseOptions: { modelAssetPath: './mediapipe/face_landmarker.task' },
-              runningMode: 'VIDEO',
-              numFaces: 4,
-            });
-          } catch {
-            landmarker = null;
+          for (const baseDir of ['./mediapipe', './public/mediapipe']) {
+            try {
+              const localVision = await FilesetResolver.forVisionTasks(`${baseDir}/wasm`);
+              landmarker = await FaceLandmarker.createFromOptions(localVision, {
+                baseOptions: { modelAssetPath: `${baseDir}/face_landmarker.task` },
+                runningMode: 'VIDEO',
+                numFaces: 4,
+              });
+              break;
+            } catch {
+              landmarker = null;
+            }
           }
         }
         if (!landmarker) {

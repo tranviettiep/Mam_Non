@@ -16,8 +16,11 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      if (window.location.protocol === 'file:' && document.querySelector('script[src="/src/main.tsx"]')) {
-        window.location.replace('./dist/index.html');
+      if (
+        !document.querySelector('script[src*="/@vite/client"]') &&
+        document.querySelector('script[src="/src/main.tsx"]')
+      ) {
+        window.location.replace('./San_Choi_Chu_Cai.html');
       }
     </script>
   </body>

@@ -8,6 +8,7 @@ import {
   PenTool,
   PhoneCall,
   Play,
+  Sliders,
   Sparkles,
   Volume2,
   VolumeX,
@@ -23,6 +24,7 @@ interface HubScreenProps {
   onNavigate: (screen: ActiveScreen) => void;
   onSelectPreset: (preset: LessonConfig) => void;
   onOpenEditor: () => void;
+  onOpenVoiceSettings: () => void;
   onExportHtml: () => void;
 }
 
@@ -33,6 +35,7 @@ export const HubScreen: React.FC<HubScreenProps> = ({
   onNavigate,
   onSelectPreset,
   onOpenEditor,
+  onOpenVoiceSettings,
   onExportHtml,
 }) => {
   const toggleFullscreen = () => {
@@ -223,6 +226,15 @@ export const HubScreen: React.FC<HubScreenProps> = ({
         >
           <Download className="h-4 w-4" />
           Tải game (.html)
+        </button>
+
+        <button
+          type="button"
+          onClick={onOpenVoiceSettings}
+          className="flex cursor-pointer items-center gap-2 rounded-xl bg-pink-600 px-4 py-2 font-heading text-base font-bold text-white transition hover:bg-pink-500"
+        >
+          <Sliders className="h-4 w-4" />
+          Cài đặt giọng nói
         </button>
 
         <button

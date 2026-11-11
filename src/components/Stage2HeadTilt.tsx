@@ -9,6 +9,7 @@ import {
   HelpCircle,
   RotateCcw,
   SkipForward,
+  Sliders,
   Star,
   Trophy,
   Volume2,
@@ -23,6 +24,7 @@ interface Stage2HeadTiltProps {
   onBackHub: () => void;
   onNextStage: () => void;
   onOpenEditor: () => void;
+  onOpenVoiceSettings: () => void;
   onExportHtml: () => void;
 }
 
@@ -38,6 +40,7 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
   onBackHub,
   onNextStage,
   onOpenEditor,
+  onOpenVoiceSettings,
   onExportHtml,
 }) => {
   const questions = lesson.questions;
@@ -716,6 +719,15 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
         >
           <Edit3 className="h-4 w-4" />
           Chỉnh sửa
+        </button>
+
+        <button
+          type="button"
+          onClick={onOpenVoiceSettings}
+          className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-2 font-heading text-base font-bold text-white transition hover:bg-indigo-500"
+        >
+          <Sliders className="h-4 w-4" />
+          Giọng nói
         </button>
 
         <button

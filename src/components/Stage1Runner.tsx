@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Pause, Play, RotateCcw, Sparkles, Trophy } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Pause, Play, RotateCcw, Sliders, Sparkles, Trophy } from 'lucide-react';
 import { LessonConfig } from '../types/lesson';
 import { audioManager } from '../utils/audio';
 import { ConfettiOverlay } from './ConfettiOverlay';
@@ -8,6 +8,7 @@ interface Stage1RunnerProps {
   lesson: LessonConfig;
   onBackHub: () => void;
   onNextStage: () => void;
+  onOpenVoiceSettings: () => void;
 }
 
 type RunnerEventKind = 'jump' | 'duck' | 'left' | 'right' | 'dance' | 'letter';
@@ -43,7 +44,12 @@ function buildLevelTimeline(level: 1 | 2, letters: string[]): Omit<TrackItem, 'i
   return seq;
 }
 
-export const Stage1Runner: React.FC<Stage1RunnerProps> = ({ lesson, onBackHub, onNextStage }) => {
+export const Stage1Runner: React.FC<Stage1RunnerProps> = ({
+  lesson,
+  onBackHub,
+  onNextStage,
+  onOpenVoiceSettings,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [level, setLevel] = useState<1 | 2>(1);
   const [phase, setPhase] = useState<'countdown' | 'running' | 'paused' | 'level_clear' | 'finished'>('countdown');
@@ -632,6 +638,15 @@ export const Stage1Runner: React.FC<Stage1RunnerProps> = ({ lesson, onBackHub, o
           >
             <RotateCcw className="h-4 w-4" />
             Chơi lại Level {level}
+          </button>
+
+          <button
+            type="button"
+            onClick={onOpenVoiceSettings}
+            className="flex cursor-pointer items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 font-heading text-base font-bold text-white hover:bg-indigo-500"
+          >
+            <Sliders className="h-4 w-4" />
+            Giọng nói
           </button>
 
           <button

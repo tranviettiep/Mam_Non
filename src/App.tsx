@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ActiveScreen, LessonConfig } from './types/lesson';
+import React, { useEffect, useState } from 'react';
+import { ActiveScreen, LessonConfig, VoiceSettings } from './types/lesson';
 import { loadInitialLesson, saveLessonToStorage } from './data/lessons';
 import { audioManager } from './utils/audio';
 import { exportStandaloneGameHtml } from './utils/exportHtml';
@@ -9,21 +9,25 @@ import { Stage1Runner } from './components/Stage1Runner';
 import { Stage2HeadTilt } from './components/Stage2HeadTilt';
 import { Stage3Tracing } from './components/Stage3Tracing';
 import { LessonEditorModal } from './components/LessonEditorModal';
+import { VoiceSettingsModal } from './components/VoiceSettingsModal';
 
 export const App: React.FC = () => {
   const [lesson, setLesson] = useState<LessonConfig>(() => loadInitialLesson());
   const [screen, setScreen] = useState<ActiveScreen>('call');
-  const [muted, setMuted] = useState(false);
+  const [voiceSettings, setVoiceSettings] = useState<VoiceSettings>(() =>
+    audioManager.getSettings()
+  );
   const [editorOpen, setEditorOpen] = useState(false);
+  const [voiceModalOpen, setVoiceModalOpen] = useState(false);
+
+  useEffect(() => {
+    return audioManager.subscribe((next) => {
+      setVoiceSettings(next);
+    });
+  }, []);
 
   const handleToggleMute = () => {
-    const next = !muted;
-    audioManager.muted = next;
-    if (next) {
-      audioManager.stopRingtone();
-      audioManager.stopSpeaking();
-    }
-    setMuted(next);
+    audioManager.updateSettings({ muted: !voiceSettings.muted });
   };
 
   const handleSaveLesson = (updated: LessonConfig) => {
@@ -44,17 +48,22 @@ export const App: React.FC = () => {
   return (
     <div className="relative h-screen w-screen overflow-hidden select-none">
       {screen === 'call' && (
-        <SecretCallScreen lesson={lesson} onFinishCall={() => setScreen('hub')} />
+        <SecretCallScreen
+          lesson={lesson}
+          onFinishCall={() => setScreen('hub')}
+          onOpenVoiceSettings={() => setVoiceModalOpen(true)}
+        />
       )}
 
       {screen === 'hub' && (
         <HubScreen
           lesson={lesson}
-          muted={muted}
+          muted={voiceSettings.muted}
           onToggleMute={handleToggleMute}
           onNavigate={setScreen}
           onSelectPreset={handleSelectPreset}
           onOpenEditor={() => setEditorOpen(true)}
+          onOpenVoiceSettings={() => setVoiceModalOpen(true)}
           onExportHtml={() => exportStandaloneGameHtml(lesson)}
         />
       )}
@@ -64,6 +73,7 @@ export const App: React.FC = () => {
           lesson={lesson}
           onBackHub={() => setScreen('hub')}
           onNextStage={() => setScreen('stage2')}
+          onOpenVoiceSettings={() => setVoiceModalOpen(true)}
         />
       )}
 
@@ -73,12 +83,17 @@ export const App: React.FC = () => {
           onBackHub={() => setScreen('hub')}
           onNextStage={() => setScreen('stage3')}
           onOpenEditor={() => setEditorOpen(true)}
+          onOpenVoiceSettings={() => setVoiceModalOpen(true)}
           onExportHtml={() => exportStandaloneGameHtml(lesson)}
         />
       )}
 
       {screen === 'stage3' && (
-        <Stage3Tracing lesson={lesson} onBackHub={() => setScreen('hub')} />
+        <Stage3Tracing
+          lesson={lesson}
+          onBackHub={() => setScreen('hub')}
+          onOpenVoiceSettings={() => setVoiceModalOpen(true)}
+        />
       )}
 
       <LessonEditorModal
@@ -87,6 +102,14 @@ export const App: React.FC = () => {
         onClose={() => setEditorOpen(false)}
         onSave={handleSaveLesson}
         onExportHtml={(updated) => exportStandaloneGameHtml(updated)}
+      />
+
+      <VoiceSettingsModal
+        open={voiceModalOpen}
+        settings={voiceSettings}
+        onChangeSettings={(patch) => audioManager.updateSettings(patch)}
+        onResetSettings={() => audioManager.resetSettings()}
+        onClose={() => setVoiceModalOpen(false)}
       />
     </div>
   );

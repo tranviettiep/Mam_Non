@@ -27,6 +27,7 @@ Thực hiện tuần tự các bước sau khi cần bổ sung một nhóm chữ
      - Câu 5–6: Tìm từ vựng quen thuộc với trẻ mầm non có chứa chữ cái đó (ví dụ: *hoa sen, con dê, quả cam, cái ca...*).
      - Câu 7–8: Hỏi đặc điểm cấu tạo nét cơ bản (số nét hoặc dấu phụ như dấu mũ, dấu móc, nét ngang).
      - Câu 9–10: Câu hỏi tổng hợp củng cố phân biệt cặp chữ dễ nhầm trong nhóm.
-5. **Kiểm chứng (`Verify`)**:
+5. **Cập nhật giọng Nữ AI Thuần Việt & Kiểm chứng (`Verify`)**:
    - Đăng ký gói bài học vào `LESSON_PRESETS` trong `src/data/lessons.ts`.
+   - Chạy `python scripts/generate_voice_bank.py` để tự động tổng hợp giọng nữ `vi-VN-HoaiMyNeural` cho lời chào, câu hỏi và hướng dẫn nét viết mới vào `src/data/voiceBank.ts`.
    - Chạy `npm.cmd run build` (hoặc `npx.cmd tsc --noEmit`) đảm bảo khớp 100% kiểu dữ liệu `LessonConfig` và mọi chữ trong `targetLetters` đều tồn tại trong bảng `LETTER_STROKES`.

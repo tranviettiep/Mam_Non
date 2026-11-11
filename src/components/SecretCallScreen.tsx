@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { PhoneCall, PhoneForwarded, Sparkles, Volume2, ArrowRight, RotateCcw } from 'lucide-react';
+import { PhoneCall, PhoneForwarded, Sliders, Sparkles, Volume2, ArrowRight, RotateCcw } from 'lucide-react';
 import { LessonConfig } from '../types/lesson';
 import { audioManager } from '../utils/audio';
 
 interface SecretCallScreenProps {
   lesson: LessonConfig;
   onFinishCall: () => void;
+  onOpenVoiceSettings: () => void;
 }
 
-export const SecretCallScreen: React.FC<SecretCallScreenProps> = ({ lesson, onFinishCall }) => {
+export const SecretCallScreen: React.FC<SecretCallScreenProps> = ({
+  lesson,
+  onFinishCall,
+  onOpenVoiceSettings,
+}) => {
   const [callState, setCallState] = useState<'idle' | 'ringing' | 'connected'>('idle');
   const [speaking, setSpeaking] = useState(false);
 
@@ -32,17 +37,27 @@ export const SecretCallScreen: React.FC<SecretCallScreenProps> = ({ lesson, onFi
     setCallState('connected');
     setSpeaking(true);
     window.setTimeout(() => {
-      audioManager.speakVi(lesson.secretCallGreeting, lesson.secretCallCustomAudioUrl, () => {
-        setSpeaking(false);
-      });
+      audioManager.speakVi(
+        lesson.secretCallGreeting,
+        lesson.secretCallCustomAudioUrl,
+        () => {
+          setSpeaking(false);
+        },
+        'character'
+      );
     }, 350);
   };
 
   const handleReplayVoice = () => {
     setSpeaking(true);
-    audioManager.speakVi(lesson.secretCallGreeting, lesson.secretCallCustomAudioUrl, () => {
-      setSpeaking(false);
-    });
+    audioManager.speakVi(
+      lesson.secretCallGreeting,
+      lesson.secretCallCustomAudioUrl,
+      () => {
+        setSpeaking(false);
+      },
+      'character'
+    );
   };
 
   const handleEnterPlayground = () => {
@@ -199,8 +214,16 @@ export const SecretCallScreen: React.FC<SecretCallScreenProps> = ({ lesson, onFi
         )}
       </main>
 
-      {/* Footer quick skip */}
-      <footer className="relative z-10 flex items-center gap-4">
+      {/* Footer quick skip & voice settings */}
+      <footer className="relative z-10 flex flex-wrap items-center justify-center gap-3">
+        <button
+          type="button"
+          onClick={onOpenVoiceSettings}
+          className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-white/85 px-4 py-2 text-sm font-bold text-indigo-800 shadow-2xs hover:bg-white"
+        >
+          <Sliders className="h-4 w-4" />
+          Cài đặt giọng nói
+        </button>
         {callState !== 'idle' && (
           <button
             type="button"

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Lightbulb, Play, RotateCcw, Sparkles, Star, Trophy, Volume2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Lightbulb, Play, RotateCcw, Sliders, Sparkles, Star, Trophy, Volume2 } from 'lucide-react';
 import { LessonConfig, Point2D } from '../types/lesson';
 import { AVAILABLE_TRACING_LETTERS, LETTER_STROKES } from '../data/strokes';
 import { audioManager } from '../utils/audio';
@@ -8,6 +8,7 @@ import { ConfettiOverlay } from './ConfettiOverlay';
 interface Stage3TracingProps {
   lesson: LessonConfig;
   onBackHub: () => void;
+  onOpenVoiceSettings: () => void;
 }
 
 const START_HIT_RADIUS = 44;
@@ -18,7 +19,11 @@ function pointsToPath(pts: Point2D[]): string {
   return pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
 }
 
-export const Stage3Tracing: React.FC<Stage3TracingProps> = ({ lesson, onBackHub }) => {
+export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
+  lesson,
+  onBackHub,
+  onOpenVoiceSettings,
+}) => {
   const validLessonLetters = useMemo(() => {
     const filtered = lesson.targetLetters.filter((l) => Boolean(LETTER_STROKES[l]));
     return filtered.length > 0 ? filtered : ['e', 'ê'];
@@ -278,21 +283,31 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({ lesson, onBackHub 
             <Volume2 className="h-5 w-5 text-blue-600" />
           </button>
 
-          {/* Quick Extra Letter Picker for Teachers */}
-          <div className="hidden items-center gap-1.5 lg:flex">
-            <span className="text-xs font-bold text-slate-500">Thư viện:</span>
-            <select
-              aria-label="Chọn chữ cái tập viết"
-              value={activeLetterKey}
-              onChange={(e) => selectLetter(e.target.value)}
-              className="font-letter cursor-pointer rounded-xl border-2 border-blue-300 bg-white px-3 py-1.5 text-base font-bold text-blue-900"
+          {/* Quick Extra Letter Picker & Voice Settings for Teachers */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onOpenVoiceSettings}
+              className="flex cursor-pointer items-center gap-1.5 rounded-xl border-2 border-indigo-200 bg-indigo-50 px-3 py-1.5 font-heading text-sm font-bold text-indigo-800 hover:bg-indigo-100"
             >
-              {AVAILABLE_TRACING_LETTERS.map((ch) => (
-                <option key={ch} value={ch}>
-                  Chữ {ch} ({LETTER_STROKES[ch].upper})
-                </option>
-              ))}
-            </select>
+              <Sliders className="h-4 w-4" />
+              Giọng nói
+            </button>
+            <div className="hidden items-center gap-1.5 lg:flex">
+              <span className="text-xs font-bold text-slate-500">Thư viện:</span>
+              <select
+                aria-label="Chọn chữ cái tập viết"
+                value={activeLetterKey}
+                onChange={(e) => selectLetter(e.target.value)}
+                className="font-letter cursor-pointer rounded-xl border-2 border-blue-300 bg-white px-3 py-1.5 text-base font-bold text-blue-900"
+              >
+                {AVAILABLE_TRACING_LETTERS.map((ch) => (
+                  <option key={ch} value={ch}>
+                    Chữ {ch} ({LETTER_STROKES[ch].upper})
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </header>
 

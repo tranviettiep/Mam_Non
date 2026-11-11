@@ -39,3 +39,15 @@ export interface LessonConfig {
 }
 
 export type ActiveScreen = 'call' | 'hub' | 'stage1' | 'stage2' | 'stage3';
+
+export type VoicePreset = 'auto_role' | 'teacher_sweet' | 'cartoon_cute' | 'slow_clear';
+
+export type VoiceRole = 'character' | 'teacher';
+
+export interface VoiceSettings {
+  preset: VoicePreset;
+  rate: number; // 0.75 .. 1.25
+  voiceVolume: number; // 0 .. 1
+  sfxVolume: number; // 0 .. 1
+  muted: boolean;
+}

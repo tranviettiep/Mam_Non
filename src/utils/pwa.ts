@@ -71,11 +71,17 @@ class PwaInstallManager {
     // Skip SW registration on Vite HMR dev server to avoid caching dev modules
     if (document.querySelector('script[src*="/@vite/client"]')) return;
 
-    window.addEventListener('load', () => {
+    const doRegister = () => {
       navigator.serviceWorker.register('./sw.js').catch(() => {
         // ignore SW registration failure in restricted webviews
       });
-    });
+    };
+
+    if (document.readyState === 'complete') {
+      doRegister();
+    } else {
+      window.addEventListener('load', doRegister, { once: true });
+    }
   }
 
   public getState(): PwaInstallState {

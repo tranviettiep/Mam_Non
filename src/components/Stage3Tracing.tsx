@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, Lightbulb, Play, RotateCcw, Sliders, Sparkles, Star, Trophy, Volume2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Edit3, Lightbulb, Play, RotateCcw, Sliders, Sparkles, Star, Trophy, Volume2 } from 'lucide-react';
 import { LessonConfig, Point2D } from '../types/lesson';
+import { getEffectiveStrokeInstruction } from '../data/lessons';
 import { AVAILABLE_TRACING_LETTERS, LETTER_STROKES } from '../data/strokes';
 import { audioManager } from '../utils/audio';
 import { ConfettiOverlay } from './ConfettiOverlay';
@@ -8,6 +9,7 @@ import { ConfettiOverlay } from './ConfettiOverlay';
 interface Stage3TracingProps {
   lesson: LessonConfig;
   onBackHub: () => void;
+  onOpenEditor: () => void;
   onOpenVoiceSettings: () => void;
 }
 
@@ -22,6 +24,7 @@ function pointsToPath(pts: Point2D[]): string {
 export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
   lesson,
   onBackHub,
+  onOpenEditor,
   onOpenVoiceSettings,
 }) => {
   const validLessonLetters = useMemo(() => {
@@ -49,6 +52,10 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
 
   const letterDef = LETTER_STROKES[activeLetterKey] ?? LETTER_STROKES['e'];
   const activeStroke = letterDef.strokes[strokeIdx];
+  const activeStrokeInfo = useMemo(
+    () => getEffectiveStrokeInstruction(lesson, activeLetterKey, strokeIdx),
+    [lesson, activeLetterKey, strokeIdx]
+  );
 
   const stopHintAnimation = useCallback(() => {
     if (hintRafRef.current) {
@@ -73,13 +80,13 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
       setIsDragging(false);
       setLetterCompleted(false);
       if (announce) {
-        const firstInstruction = (LETTER_STROKES[activeLetterKey] ?? LETTER_STROKES['e']).strokes[0]?.instruction;
-        if (firstInstruction) {
-          audioManager.speakVi(firstInstruction);
+        const first = getEffectiveStrokeInstruction(lesson, activeLetterKey, 0);
+        if (first.instruction) {
+          audioManager.speakVi(first.instruction, first.customAudioUrl);
         }
       }
     },
-    [activeLetterKey, stopHintAnimation]
+    [lesson, activeLetterKey, stopHintAnimation]
   );
 
   const selectLetter = (ch: string) => {
@@ -92,18 +99,28 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
     setLetterCompleted(false);
     const def = LETTER_STROKES[ch];
     if (def?.strokes[0]) {
-      audioManager.speakVi(`Bé tập viết ${def.pronounce}. ${def.strokes[0].instruction}`);
+      const first = getEffectiveStrokeInstruction(lesson, ch, 0);
+      if (first.customAudioUrl) {
+        audioManager.speakVi(first.instruction, first.customAudioUrl);
+      } else {
+        audioManager.speakVi(`Bé tập viết ${def.pronounce}. ${first.instruction}`);
+      }
     }
   };
 
-  const triggerHint = () => {
-    if (!activeStroke || letterCompleted) return;
+  const triggerHint = (overrideStrokeIdx?: number) => {
+    const targetIdx = typeof overrideStrokeIdx === 'number' ? overrideStrokeIdx : strokeIdx;
+    const targetStroke = letterDef.strokes[targetIdx];
+    if (!targetStroke || (letterCompleted && typeof overrideStrokeIdx !== 'number')) return;
+
     stopHintAnimation();
     audioManager.playClick();
-    audioManager.speakVi(activeStroke.instruction);
+    const info = getEffectiveStrokeInstruction(lesson, activeLetterKey, targetIdx);
+    audioManager.speakVi(info.instruction, info.customAudioUrl);
 
-    const pts = activeStroke.waypoints;
-    const startIdx = Math.min(progressIdx, pts.length - 1);
+    const pts = targetStroke.waypoints;
+    const baseProgress = typeof overrideStrokeIdx === 'number' ? 0 : progressIdx;
+    const startIdx = Math.min(baseProgress, pts.length - 1);
     const remaining = pts.slice(startIdx);
     if (remaining.length < 2) return;
 
@@ -167,7 +184,8 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
       setStrokeIdx(nextIdx);
       setProgressIdx(0);
       setIsDragging(false);
-      audioManager.speakVi(letterDef.strokes[nextIdx].instruction);
+      const nextInfo = getEffectiveStrokeInstruction(lesson, activeLetterKey, nextIdx);
+      audioManager.speakVi(nextInfo.instruction, nextInfo.customAudioUrl);
     } else {
       setIsDragging(false);
       setLetterCompleted(true);
@@ -272,19 +290,31 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
           {/* Step Instruction Pill */}
           <button
             type="button"
-            onClick={() => activeStroke && audioManager.speakVi(activeStroke.instruction)}
+            onClick={() =>
+              activeStroke &&
+              audioManager.speakVi(activeStrokeInfo.instruction, activeStrokeInfo.customAudioUrl)
+            }
             className="flex cursor-pointer items-center gap-2 rounded-full border-2 border-blue-200 bg-white px-6 py-2 shadow-xs hover:bg-blue-50"
           >
             <span className="font-heading text-xl font-extrabold text-blue-900 md:text-2xl">
               {letterCompleted
                 ? `Hoàn thành ${letterDef.pronounce} xuất sắc!`
-                : `Nét ${strokeIdx + 1}/${letterDef.strokes.length}: ${activeStroke?.instruction ?? ''}`}
+                : `Nét ${strokeIdx + 1}/${letterDef.strokes.length}: ${activeStrokeInfo.instruction}`}
             </span>
-            <Volume2 className="h-5 w-5 text-blue-600" />
+            <Volume2 className="h-5 w-5 shrink-0 text-blue-600" />
           </button>
 
-          {/* Quick Extra Letter Picker & Voice Settings for Teachers */}
+          {/* Quick Extra Letter Picker, Editor & Voice Settings for Teachers */}
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onOpenEditor}
+              className="flex cursor-pointer items-center gap-1.5 rounded-xl border-2 border-purple-200 bg-purple-50 px-3 py-1.5 font-heading text-sm font-bold text-purple-800 hover:bg-purple-100"
+              title="Chỉnh sửa lời hướng dẫn viết Chặng 3"
+            >
+              <Edit3 className="h-4 w-4" />
+              Chỉnh sửa
+            </button>
             <button
               type="button"
               onClick={onOpenVoiceSettings}
@@ -455,7 +485,7 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
             type="button"
             onClick={() => {
               resetCurrentLetter(false);
-              triggerHint();
+              triggerHint(0);
             }}
             className="flex cursor-pointer items-center gap-2 rounded-2xl border-2 border-emerald-700 bg-emerald-500 px-5 py-2.5 font-heading text-lg font-extrabold text-white shadow-[0_5px_0_#047857] transition hover:bg-emerald-400 active:translate-y-0.5"
           >
@@ -492,7 +522,7 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
 
           <button
             type="button"
-            onClick={triggerHint}
+            onClick={() => triggerHint()}
             className="flex cursor-pointer items-center gap-2 rounded-2xl border-2 border-indigo-800 bg-indigo-600 px-5 py-2.5 font-heading text-lg font-extrabold text-white shadow-[0_5px_0_#3730A3] transition hover:bg-indigo-500 active:translate-y-0.5"
           >
             <Lightbulb className="h-5 w-5" />

@@ -9,6 +9,11 @@ export interface StrokeDef {
   waypoints: Point2D[];
 }
 
+export interface CustomStrokeInstruction {
+  instruction: string;
+  customAudioUrl?: string;
+}
+
 export interface LetterStrokeDef {
   letter: string;
   upper: string;
@@ -36,7 +41,10 @@ export interface LessonConfig {
   secretCallCustomAudioUrl?: string;
   runnerLetters: string[];
   questions: QuizQuestion[];
+  tracingOverrides?: Record<string, CustomStrokeInstruction[]>;
 }
+
+export type EditorTab = 'general' | 'questions' | 'tracing';
 
 export type ActiveScreen = 'call' | 'hub' | 'stage1' | 'stage2' | 'stage3';
 

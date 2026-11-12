@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActiveScreen, LessonConfig, VoiceSettings } from './types/lesson';
+import { ActiveScreen, EditorTab, LessonConfig, VoiceSettings } from './types/lesson';
 import {
   loadInitialLesson,
   saveLessonToStorage,
@@ -22,7 +22,13 @@ export const App: React.FC = () => {
     audioManager.getSettings()
   );
   const [editorOpen, setEditorOpen] = useState(false);
+  const [editorInitialTab, setEditorInitialTab] = useState<EditorTab>('general');
   const [voiceModalOpen, setVoiceModalOpen] = useState(false);
+
+  const openEditorOnTab = (tab: EditorTab) => {
+    setEditorInitialTab(tab);
+    setEditorOpen(true);
+  };
 
   useEffect(() => {
     return audioManager.subscribe((next) => {
@@ -45,6 +51,7 @@ export const App: React.FC = () => {
       schoolName: lesson.schoolName,
       className: lesson.className,
       teacherNames: lesson.teacherNames,
+      tracingOverrides: lesson.tracingOverrides,
       secretCallGreeting: syncGreetingWithClassInfo(
         preset.secretCallGreeting,
         lesson.teacherNames,
@@ -71,7 +78,7 @@ export const App: React.FC = () => {
           onToggleMute={handleToggleMute}
           onNavigate={setScreen}
           onSelectPreset={handleSelectPreset}
-          onOpenEditor={() => setEditorOpen(true)}
+          onOpenEditor={() => openEditorOnTab('general')}
           onOpenVoiceSettings={() => setVoiceModalOpen(true)}
           onExportHtml={() => exportStandaloneGameHtml(lesson)}
         />
@@ -91,7 +98,7 @@ export const App: React.FC = () => {
           lesson={lesson}
           onBackHub={() => setScreen('hub')}
           onNextStage={() => setScreen('stage3')}
-          onOpenEditor={() => setEditorOpen(true)}
+          onOpenEditor={() => openEditorOnTab('questions')}
           onOpenVoiceSettings={() => setVoiceModalOpen(true)}
           onExportHtml={() => exportStandaloneGameHtml(lesson)}
         />
@@ -101,6 +108,7 @@ export const App: React.FC = () => {
         <Stage3Tracing
           lesson={lesson}
           onBackHub={() => setScreen('hub')}
+          onOpenEditor={() => openEditorOnTab('tracing')}
           onOpenVoiceSettings={() => setVoiceModalOpen(true)}
         />
       )}
@@ -108,6 +116,7 @@ export const App: React.FC = () => {
       <LessonEditorModal
         open={editorOpen}
         lesson={lesson}
+        initialTab={editorInitialTab}
         onClose={() => setEditorOpen(false)}
         onSave={handleSaveLesson}
         onExportHtml={(updated) => exportStandaloneGameHtml(updated)}

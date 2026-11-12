@@ -1,4 +1,5 @@
-import { LessonConfig } from '../types/lesson';
+import { CustomStrokeInstruction, LessonConfig } from '../types/lesson';
+import { LETTER_STROKES } from './strokes';
 
 const DEFAULT_PUBLIC_SHARE_BASE = 'https://tranviettiep.github.io/Mam_Non/';
 
@@ -191,7 +192,85 @@ function decodeUtf8Base64Url(b64url: string): string {
   return new TextDecoder().decode(bytes);
 }
 
+export function stripDuplicateStrokePrefix(text: string): string {
+  return (text || '').replace(/^\s*Nét\s*\d+(?:\s*\/\s*\d+)?\s*:\s*/i, '');
+}
+
+export function getEffectiveStrokeInstruction(
+  lesson: LessonConfig,
+  letterKey: string,
+  strokeIdx: number
+): {
+  instruction: string;
+  defaultInstruction: string;
+  customAudioUrl?: string;
+  isModified: boolean;
+} {
+  const defaultInstruction = LETTER_STROKES[letterKey]?.strokes[strokeIdx]?.instruction ?? '';
+  const override = lesson.tracingOverrides?.[letterKey]?.[strokeIdx];
+  const rawOverride =
+    override && typeof override.instruction === 'string'
+      ? stripDuplicateStrokePrefix(override.instruction)
+      : undefined;
+  const instruction =
+    rawOverride !== undefined && rawOverride.trim().length > 0
+      ? rawOverride
+      : defaultInstruction;
+  const customAudioUrl = override?.customAudioUrl;
+  const isModified = instruction.trim() !== defaultInstruction.trim() || Boolean(customAudioUrl);
+  return { instruction, defaultInstruction, customAudioUrl, isModified };
+}
+
+export function hasCustomTracingInstructions(lesson: LessonConfig): boolean {
+  if (!lesson.tracingOverrides) return false;
+  for (const [letterKey, list] of Object.entries(lesson.tracingOverrides)) {
+    const defStrokes = LETTER_STROKES[letterKey]?.strokes;
+    if (!defStrokes || !Array.isArray(list)) continue;
+    for (let i = 0; i < Math.min(defStrokes.length, list.length); i++) {
+      const item = list[i];
+      if (!item) continue;
+      const cleaned = stripDuplicateStrokePrefix(item.instruction || '').trim();
+      if (cleaned && cleaned !== defStrokes[i].instruction.trim()) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function sanitizeTracingOverridesForShare(
+  overrides?: Record<string, CustomStrokeInstruction[]>
+): Record<string, CustomStrokeInstruction[]> | undefined {
+  if (!overrides) return undefined;
+  const out: Record<string, CustomStrokeInstruction[]> = {};
+  let hasAny = false;
+
+  for (const [letterKey, list] of Object.entries(overrides)) {
+    const defStrokes = LETTER_STROKES[letterKey]?.strokes;
+    if (!defStrokes || !Array.isArray(list)) continue;
+
+    let letterModified = false;
+    const sanitizedList: CustomStrokeInstruction[] = defStrokes.map((st, idx) => {
+      const cleaned = stripDuplicateStrokePrefix(list[idx]?.instruction || '').trim();
+      if (cleaned && cleaned !== st.instruction.trim()) {
+        letterModified = true;
+        return { instruction: cleaned };
+      }
+      return { instruction: st.instruction };
+    });
+
+    if (letterModified) {
+      out[letterKey] = sanitizedList;
+      hasAny = true;
+    }
+  }
+
+  return hasAny ? out : undefined;
+}
+
 function findMatchingPresetIfQuestionsUnchanged(lesson: LessonConfig): LessonConfig | undefined {
+  if (hasCustomTracingInstructions(lesson)) return undefined;
+
   const candidate =
     LESSON_PRESETS.find((p) => p.id === lesson.id) ??
     LESSON_PRESETS.find((p) => p.targetLetters.join(',') === lesson.targetLetters.join(','));
@@ -253,11 +332,12 @@ export function buildShareableLessonUrl(lesson: LessonConfig): string {
     return url.toString();
   }
 
-  // Trường hợp cô giáo đã tự sửa bộ câu hỏi hoặc lời chào riêng -> nén toàn bộ cấu hình lên link
+  // Trường hợp cô giáo đã tự sửa bộ câu hỏi, lời chào hoặc hướng dẫn viết Chặng 3 -> nén toàn bộ cấu hình lên link
   const stripped: LessonConfig = {
     ...lesson,
     secretCallCustomAudioUrl: undefined,
     questions: lesson.questions.map(({ customAudioUrl: _omit, ...rest }) => rest),
+    tracingOverrides: sanitizeTracingOverridesForShare(lesson.tracingOverrides),
   };
   url.searchParams.set('bai', encodeUtf8Base64Url(JSON.stringify(stripped)));
   return url.toString();

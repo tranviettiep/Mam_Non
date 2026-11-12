@@ -1,13 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Check, Download, Mic, Plus, RotateCcw, Share2, Square, Trash2, Volume2, X } from 'lucide-react';
-import { LessonConfig, QuizQuestion } from '../types/lesson';
-import { AVAILABLE_TRACING_LETTERS } from '../data/strokes';
-import { copyShareableLessonUrl, LESSON_PRESETS, syncGreetingWithClassInfo } from '../data/lessons';
+import { Check, ChevronDown, ChevronUp, Download, Mic, PenTool, Plus, RotateCcw, Share2, Square, Trash2, Volume2, X } from 'lucide-react';
+import { CustomStrokeInstruction, EditorTab, LessonConfig, QuizQuestion } from '../types/lesson';
+import { AVAILABLE_TRACING_LETTERS, LETTER_STROKES } from '../data/strokes';
+import {
+  copyShareableLessonUrl,
+  LESSON_PRESETS,
+  stripDuplicateStrokePrefix,
+  syncGreetingWithClassInfo,
+} from '../data/lessons';
 import { audioManager } from '../utils/audio';
 
 interface LessonEditorModalProps {
   open: boolean;
   lesson: LessonConfig;
+  initialTab?: EditorTab;
   onClose: () => void;
   onSave: (updated: LessonConfig) => void;
   onExportHtml: (updated: LessonConfig) => void;
@@ -16,12 +22,14 @@ interface LessonEditorModalProps {
 export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
   open,
   lesson,
+  initialTab = 'general',
   onClose,
   onSave,
   onExportHtml,
 }) => {
   const [draft, setDraft] = useState<LessonConfig>(() => structuredClone(lesson));
-  const [tab, setTab] = useState<'general' | 'questions'>('general');
+  const [tab, setTab] = useState<EditorTab>(initialTab);
+  const [showAllLibraryLetters, setShowAllLibraryLetters] = useState(false);
   const [recordingKey, setRecordingKey] = useState<string | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
@@ -31,11 +39,14 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
   useEffect(() => {
     if (open) {
       setDraft(structuredClone(lesson));
+      setTab(initialTab);
+      setShowAllLibraryLetters(false);
     }
     return () => {
       stopActiveRecording();
+      audioManager.stopSpeaking();
     };
-  }, [open, lesson]);
+  }, [open, lesson, initialTab]);
 
   const stopActiveRecording = () => {
     if (recorderRef.current && recorderRef.current.state !== 'inactive') {
@@ -141,6 +152,102 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
     }));
   };
 
+  const updateStrokeOverride = (
+    letterKey: string,
+    strokeIdx: number,
+    patch: Partial<CustomStrokeInstruction>
+  ) => {
+    const defStrokes = LETTER_STROKES[letterKey]?.strokes;
+    if (!defStrokes) return;
+    setDraft((prev) => {
+      const prevMap = prev.tracingOverrides ? { ...prev.tracingOverrides } : {};
+      const prevArr = prevMap[letterKey]
+        ? [...prevMap[letterKey]]
+        : defStrokes.map((s) => ({ instruction: s.instruction }));
+      while (prevArr.length < defStrokes.length) {
+        const idx = prevArr.length;
+        prevArr.push({ instruction: defStrokes[idx].instruction });
+      }
+      prevArr[strokeIdx] = {
+        ...prevArr[strokeIdx],
+        ...patch,
+      };
+      prevMap[letterKey] = prevArr;
+      return {
+        ...prev,
+        tracingOverrides: prevMap,
+      };
+    });
+  };
+
+  const resetSingleStrokeOverride = (letterKey: string, strokeIdx: number) => {
+    const defInst = LETTER_STROKES[letterKey]?.strokes[strokeIdx]?.instruction ?? '';
+    updateStrokeOverride(letterKey, strokeIdx, {
+      instruction: defInst,
+      customAudioUrl: undefined,
+    });
+  };
+
+  const finalizeDraft = (raw: LessonConfig): LessonConfig => {
+    if (!raw.tracingOverrides) return raw;
+    const cleanedMap: Record<string, CustomStrokeInstruction[]> = {};
+    let hasAny = false;
+
+    for (const [letterKey, list] of Object.entries(raw.tracingOverrides)) {
+      const defStrokes = LETTER_STROKES[letterKey]?.strokes;
+      if (!defStrokes || !Array.isArray(list)) continue;
+
+      let letterHasChange = false;
+      const normalized = defStrokes.map((st, idx) => {
+        const item = list[idx];
+        const cleanedText = stripDuplicateStrokePrefix(item?.instruction ?? '').trim();
+        const finalInstruction = cleanedText || st.instruction;
+        const customAudioUrl = item?.customAudioUrl;
+        if (finalInstruction !== st.instruction || customAudioUrl) {
+          letterHasChange = true;
+        }
+        return {
+          instruction: finalInstruction,
+          ...(customAudioUrl ? { customAudioUrl } : {}),
+        };
+      });
+
+      if (letterHasChange) {
+        cleanedMap[letterKey] = normalized;
+        hasAny = true;
+      }
+    }
+
+    return {
+      ...raw,
+      tracingOverrides: hasAny ? cleanedMap : undefined,
+    };
+  };
+
+  const targetTracingLetters = draft.targetLetters.filter((ch) => Boolean(LETTER_STROKES[ch]));
+  const extraTracingLetters = AVAILABLE_TRACING_LETTERS.filter(
+    (ch) => !targetTracingLetters.includes(ch)
+  );
+  const visibleTracingLetters = showAllLibraryLetters
+    ? [...targetTracingLetters, ...extraTracingLetters]
+    : targetTracingLetters.length > 0
+      ? targetTracingLetters
+      : ['e', 'ê'];
+
+  const hasAnyStrokeDraftChange = Boolean(
+    draft.tracingOverrides &&
+      Object.entries(draft.tracingOverrides).some(([letterKey, arr]) => {
+        const defs = LETTER_STROKES[letterKey]?.strokes;
+        if (!defs || !Array.isArray(arr)) return false;
+        return defs.some((st, idx) => {
+          const item = arr[idx];
+          if (!item) return false;
+          const cleaned = stripDuplicateStrokePrefix(item.instruction ?? '').trim();
+          return (cleaned !== '' && cleaned !== st.instruction) || Boolean(item.customAudioUrl);
+        });
+      })
+  );
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/65 p-4 backdrop-blur-xs">
       <div className="flex h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border-4 border-blue-500 bg-white shadow-2xl">
@@ -151,13 +258,14 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
               Chỉnh Sửa Bài Học & Câu Hỏi
             </h2>
             <p className="text-xs font-semibold text-slate-600">
-              Tùy chỉnh trường lớp, nhóm chữ cái, bộ câu hỏi hoặc ghi âm giọng đọc của cô giáo
+              Tùy chỉnh trường lớp, nhóm chữ cái, bộ câu hỏi Chặng 2, lời hướng dẫn viết Chặng 3 và ghi âm giọng cô
             </p>
           </div>
           <button
             type="button"
             onClick={() => {
               stopActiveRecording();
+              audioManager.stopSpeaking();
               onClose();
             }}
             aria-label="Đóng cửa sổ chỉnh sửa"
@@ -168,7 +276,7 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-2 border-b border-slate-200 bg-slate-50 px-6 py-2.5">
+        <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 bg-slate-50 px-6 py-2.5">
           <button
             type="button"
             onClick={() => setTab('general')}
@@ -186,6 +294,16 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
             }`}
           >
             2. Bộ câu hỏi Chặng 2 ({draft.questions.length} câu)
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab('tracing')}
+            className={`flex cursor-pointer items-center gap-1.5 rounded-xl px-4 py-2 font-heading text-base font-bold transition ${
+              tab === 'tracing' ? 'bg-pink-600 text-white shadow-xs' : 'bg-white text-slate-700 hover:bg-slate-100'
+            }`}
+          >
+            <PenTool className="h-4 w-4" />
+            3. Hướng dẫn viết Chặng 3 ({targetTracingLetters.join(', ')})
           </button>
         </div>
 
@@ -209,6 +327,7 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
                           schoolName: draft.schoolName,
                           className: draft.className,
                           teacherNames: draft.teacherNames,
+                          tracingOverrides: draft.tracingOverrides,
                           secretCallGreeting: syncGreetingWithClassInfo(
                             p.secretCallGreeting,
                             draft.teacherNames,
@@ -469,6 +588,191 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
               </button>
             </div>
           )}
+
+          {tab === 'tracing' && (
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-pink-200 bg-pink-50/70 p-4">
+                <div className="max-w-xl">
+                  <p className="font-heading text-base font-extrabold text-pink-950">
+                    Chỉnh sửa lời hướng dẫn từng nét viết ở Chặng 3
+                  </p>
+                  <p className="mt-0.5 text-xs font-semibold text-slate-600">
+                    Tiền tố <strong>“Nét 1/2:”</strong> sẽ tự động đánh số trên bảng viết. Cô nhập nội dung hướng dẫn phía sau hoặc bấm <strong>Ghi âm</strong> giọng thật của cô cho từng nét.
+                  </p>
+                </div>
+                {hasAnyStrokeDraftChange && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setDraft((prev) => ({
+                        ...prev,
+                        tracingOverrides: undefined,
+                      }))
+                    }
+                    className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-pink-300 bg-white px-3 py-1.5 text-xs font-bold text-pink-800 hover:bg-pink-100"
+                  >
+                    <RotateCcw className="h-3.5 w-3.5" />
+                    Khôi phục tất cả nét mặc định
+                  </button>
+                )}
+              </div>
+
+              {visibleTracingLetters.map((ch) => {
+                const def = LETTER_STROKES[ch];
+                if (!def) return null;
+                const isTarget = targetTracingLetters.includes(ch);
+                return (
+                  <div
+                    key={ch}
+                    className="rounded-2xl border-2 border-slate-200 bg-slate-50/80 p-4 shadow-2xs"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                      <div className="flex items-center gap-3">
+                        <span className="font-letter flex h-11 w-11 items-center justify-center rounded-2xl border-2 border-blue-700 bg-blue-600 text-2xl font-extrabold text-white shadow-2xs">
+                          {def.letter}
+                        </span>
+                        <div>
+                          <h3 className="font-heading text-lg font-extrabold text-blue-950">
+                            Chữ {def.letter} ({def.upper}) — {def.strokes.length} nét viết
+                          </h3>
+                          <p className="text-xs font-semibold text-slate-500">
+                            Phát âm chuẩn: “{def.pronounce}”
+                          </p>
+                        </div>
+                      </div>
+
+                      {isTarget ? (
+                        <span className="rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-extrabold text-emerald-800">
+                          Chữ trong bài học hiện tại
+                        </span>
+                      ) : (
+                        <span className="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-bold text-slate-600">
+                          Chữ mở rộng trong thư viện
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="mt-3 space-y-3">
+                      {def.strokes.map((st, sIdx) => {
+                        const ov = draft.tracingOverrides?.[ch]?.[sIdx];
+                        const inputVal = ov?.instruction !== undefined ? ov.instruction : st.instruction;
+                        const cleanedPreview = stripDuplicateStrokePrefix(inputVal).trim() || st.instruction;
+                        const isChanged =
+                          (stripDuplicateStrokePrefix(inputVal).trim() !== '' &&
+                            stripDuplicateStrokePrefix(inputVal).trim() !== st.instruction) ||
+                          Boolean(ov?.customAudioUrl);
+                        const recKey = `trace-${ch}-${sIdx}`;
+
+                        return (
+                          <div
+                            key={recKey}
+                            className="rounded-xl border border-slate-200 bg-white p-3 shadow-2xs"
+                          >
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <span className="rounded-full border border-blue-200 bg-blue-50 px-3 py-0.5 font-heading text-sm font-extrabold text-blue-900">
+                                Nét {sIdx + 1}/{def.strokes.length}:
+                              </span>
+
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => audioManager.speakVi(cleanedPreview, ov?.customAudioUrl)}
+                                  className="flex cursor-pointer items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1 text-xs font-bold text-white hover:bg-emerald-500"
+                                  title="Nghe thử lời hướng dẫn nét này"
+                                >
+                                  <Volume2 className="h-3.5 w-3.5" />
+                                  Nghe thử
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    startVoiceRecording(recKey, (url) =>
+                                      updateStrokeOverride(ch, sIdx, { customAudioUrl: url })
+                                    )
+                                  }
+                                  className={`flex cursor-pointer items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-bold text-white ${
+                                    recordingKey === recKey
+                                      ? 'animate-pulse bg-rose-600'
+                                      : 'bg-indigo-600 hover:bg-indigo-500'
+                                  }`}
+                                >
+                                  {recordingKey === recKey ? (
+                                    <Square className="h-3 w-3" />
+                                  ) : (
+                                    <Mic className="h-3 w-3" />
+                                  )}
+                                  {recordingKey === recKey
+                                    ? 'Dừng'
+                                    : ov?.customAudioUrl
+                                      ? 'Ghi lại'
+                                      : 'Ghi âm'}
+                                </button>
+
+                                {ov?.customAudioUrl && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      updateStrokeOverride(ch, sIdx, { customAudioUrl: undefined })
+                                    }
+                                    className="cursor-pointer rounded-lg bg-slate-200 px-2 py-1 text-xs font-bold text-slate-700 hover:bg-slate-300"
+                                  >
+                                    Xóa ghi âm
+                                  </button>
+                                )}
+
+                                {isChanged && (
+                                  <button
+                                    type="button"
+                                    onClick={() => resetSingleStrokeOverride(ch, sIdx)}
+                                    className="flex cursor-pointer items-center gap-1 rounded-lg border border-amber-300 bg-amber-50 px-2 py-1 text-xs font-bold text-amber-900 hover:bg-amber-100"
+                                    title="Khôi phục câu mặc định của nét này"
+                                  >
+                                    <RotateCcw className="h-3 w-3" />
+                                    Mặc định
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+
+                            <input
+                              type="text"
+                              value={inputVal}
+                              onChange={(e) =>
+                                updateStrokeOverride(ch, sIdx, { instruction: e.target.value })
+                              }
+                              placeholder={st.instruction}
+                              className="mt-2 w-full rounded-xl border-2 border-slate-300 bg-white px-3 py-2 font-semibold text-slate-900 focus:border-blue-500 focus:outline-none"
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {extraTracingLetters.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllLibraryLetters((v) => !v)}
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 py-3 font-heading text-base font-bold text-slate-700 hover:bg-slate-100"
+                >
+                  {showAllLibraryLetters ? (
+                    <>
+                      <ChevronUp className="h-5 w-5" />
+                      Thu gọn các chữ cái ngoài bài học
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="h-5 w-5" />
+                      Hiển thị thêm {extraTracingLetters.length} chữ cái khác trong thư viện ({extraTracingLetters.join(', ')})
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Footer Actions */}
@@ -487,8 +791,11 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
               type="button"
               onClick={async () => {
                 stopActiveRecording();
-                onSave(draft);
-                await copyShareableLessonUrl(draft);
+                audioManager.stopSpeaking();
+                const finalLesson = finalizeDraft(draft);
+                setDraft(finalLesson);
+                onSave(finalLesson);
+                await copyShareableLessonUrl(finalLesson);
                 setCopiedLink(true);
                 window.setTimeout(() => setCopiedLink(false), 2500);
               }}
@@ -504,8 +811,11 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
               type="button"
               onClick={() => {
                 stopActiveRecording();
-                onSave(draft);
-                onExportHtml(draft);
+                audioManager.stopSpeaking();
+                const finalLesson = finalizeDraft(draft);
+                setDraft(finalLesson);
+                onSave(finalLesson);
+                onExportHtml(finalLesson);
               }}
               className="flex cursor-pointer items-center gap-2 rounded-xl bg-orange-500 px-4 py-2.5 font-heading text-base font-bold text-white shadow hover:bg-orange-400"
             >
@@ -517,7 +827,9 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
               type="button"
               onClick={() => {
                 stopActiveRecording();
-                onSave(draft);
+                audioManager.stopSpeaking();
+                const finalLesson = finalizeDraft(draft);
+                onSave(finalLesson);
                 onClose();
               }}
               className="flex cursor-pointer items-center gap-2 rounded-xl bg-emerald-600 px-6 py-2.5 font-heading text-lg font-extrabold text-white shadow hover:bg-emerald-500"

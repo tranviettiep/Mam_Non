@@ -123,10 +123,10 @@ export const VoiceSettingsModal: React.FC<VoiceSettingsModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/65 p-4 backdrop-blur-xs">
-      <div className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-[32px] border-4 border-blue-500 bg-white shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/65 p-2.5 sm:p-4 backdrop-blur-xs">
+      <div className="flex max-h-[92dvh] w-full max-w-3xl flex-col overflow-hidden rounded-[28px] sm:rounded-[32px] border-4 border-blue-500 bg-white shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-sky-50 via-blue-50 to-pink-50 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-slate-200 bg-gradient-to-r from-sky-50 via-blue-50 to-pink-50 px-4 py-3 sm:px-6 sm:py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl border-2 border-blue-300 bg-blue-600 text-white shadow-xs">
               <Sliders className="h-6 w-6" />

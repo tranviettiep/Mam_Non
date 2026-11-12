@@ -249,13 +249,13 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/65 p-4 backdrop-blur-xs">
-      <div className="flex h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border-4 border-blue-500 bg-white shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/65 p-2.5 sm:p-4 backdrop-blur-xs">
+      <div className="flex h-[92dvh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border-4 border-blue-500 bg-white shadow-2xl">
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-slate-200 bg-blue-50 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-slate-200 bg-blue-50 px-4 py-3 sm:px-6 sm:py-4">
           <div>
-            <h2 className="font-heading text-2xl font-extrabold text-blue-950">
-              Chỉnh Sửa Bài Học & Câu Hỏi
+            <h2 className="font-heading text-xl sm:text-2xl font-extrabold text-blue-950">
+              Chỉnh Sửa Bài Học &amp; Câu Hỏi
             </h2>
             <p className="text-xs font-semibold text-slate-600">
               Tùy chỉnh trường lớp, nhóm chữ cái, bộ câu hỏi Chặng 2, lời hướng dẫn viết Chặng 3 và ghi âm giọng cô
@@ -276,7 +276,7 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
         </div>
 
         {/* Tabs */}
-        <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 bg-slate-50 px-6 py-2.5">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 border-b border-slate-200 bg-slate-50 px-3 py-2 sm:px-6 sm:py-2.5">
           <button
             type="button"
             onClick={() => setTab('general')}
@@ -776,7 +776,7 @@ export const LessonEditorModal: React.FC<LessonEditorModalProps> = ({
         </div>
 
         {/* Footer Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-slate-50 px-6 py-3.5">
+        <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3 border-t border-slate-200 bg-slate-50 px-3.5 py-2.5 sm:px-6 sm:py-3.5">
           <button
             type="button"
             onClick={() => setDraft(structuredClone(LESSON_PRESETS[0]))}

@@ -46,7 +46,7 @@ export interface LessonConfig {
 
 export type EditorTab = 'general' | 'questions' | 'tracing';
 
-export type ActiveScreen = 'call' | 'hub' | 'stage1' | 'stage2' | 'stage3';
+export type ActiveScreen = 'call' | 'hub' | 'stage1' | 'stage2' | 'stage3' | 'stage4';
 
 export type VoicePreset = 'auto_role' | 'teacher_sweet' | 'cartoon_cute' | 'slow_clear';
 

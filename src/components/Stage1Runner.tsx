@@ -148,8 +148,8 @@ export const Stage1Runner: React.FC<Stage1RunnerProps> = ({
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.max(640, Math.floor(rect.width * dpr));
-      canvas.height = Math.max(360, Math.floor(rect.height * dpr));
+      canvas.width = Math.max(320, Math.floor(rect.width * dpr));
+      canvas.height = Math.max(320, Math.floor(rect.height * dpr));
     };
     resize();
     window.addEventListener('resize', resize);
@@ -260,8 +260,9 @@ export const Stage1Runner: React.FC<Stage1RunnerProps> = ({
       ctx.fillRect(0, horizonY, W, H - horizonY);
 
       // Perspective 3-Lane Road
-      const roadTopHalf = W * 0.055;
-      const roadBotHalf = W * 0.42;
+      const isPortrait = W < H;
+      const roadTopHalf = W * (isPortrait ? 0.09 : 0.055);
+      const roadBotHalf = W * (isPortrait ? 0.48 : 0.42);
       const centerX = W * 0.5;
 
       ctx.fillStyle = '#334155';
@@ -427,31 +428,33 @@ export const Stage1Runner: React.FC<Stage1RunnerProps> = ({
       <canvas ref={canvasRef} className="h-full w-full block" />
 
       {/* Top HUD Bar */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between p-4">
-        <div className="pointer-events-auto flex items-center gap-3">
+      <div className="safe-pad pointer-events-none absolute inset-x-0 top-0 flex flex-wrap items-center justify-between gap-2 p-2.5 sm:p-4">
+        <div className="pointer-events-auto flex items-center gap-1.5 sm:gap-3">
           <button
             type="button"
             onClick={() => {
               audioManager.stopSpeaking();
               onBackHub();
             }}
-            className="flex cursor-pointer items-center gap-2 rounded-2xl border-4 border-white bg-slate-800/90 px-4 py-2 font-heading text-lg font-bold text-white shadow-md hover:bg-slate-700"
+            className="flex cursor-pointer items-center gap-1.5 rounded-2xl border-2 sm:border-4 border-white bg-slate-800/90 px-3 py-1.5 sm:px-4 sm:py-2 font-heading text-sm sm:text-lg font-bold text-white shadow-md hover:bg-slate-700"
           >
-            <ArrowLeft className="h-5 w-5" />
-            Sảnh chính
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="hidden sm:inline">Sảnh chính</span>
+            <span className="sm:hidden">Sảnh</span>
           </button>
 
-          <div className="flex items-center gap-2 rounded-2xl border-4 border-amber-400 bg-white/95 px-5 py-2 shadow-md">
-            <Sparkles className="h-6 w-6 text-amber-500" />
-            <span className="font-heading text-xl font-extrabold text-blue-900">
-              Chặng 1: Đường Đua Chữ Cái • LEVEL {level}
+          <div className="flex items-center gap-1.5 sm:gap-2 rounded-2xl border-2 sm:border-4 border-amber-400 bg-white/95 px-3 py-1.5 sm:px-5 sm:py-2 shadow-md">
+            <Sparkles className="hidden sm:block h-6 w-6 text-amber-500" />
+            <span className="font-heading text-sm sm:text-xl font-extrabold text-blue-900">
+              <span className="hidden md:inline">Chặng 1: Đường Đua Chữ Cái • </span>
+              LEVEL {level}
             </span>
           </div>
         </div>
 
         {/* Progress + Level Switcher */}
-        <div className="pointer-events-auto flex items-center gap-3">
-          <div className="hidden items-center gap-2 rounded-2xl border-4 border-white bg-white/90 px-4 py-2 shadow md:flex">
+        <div className="pointer-events-auto flex items-center gap-2 sm:gap-3">
+          <div className="hidden items-center gap-2 rounded-2xl border-4 border-white bg-white/90 px-4 py-2 shadow lg:flex">
             <span className="text-sm font-extrabold text-slate-700">Tiến độ:</span>
             <div className="h-4 w-32 overflow-hidden rounded-full bg-slate-200">
               <div
@@ -465,26 +468,28 @@ export const Stage1Runner: React.FC<Stage1RunnerProps> = ({
           <button
             type="button"
             onClick={() => initLevel(level === 1 ? 2 : 1)}
-            className="cursor-pointer rounded-2xl border-4 border-violet-300 bg-violet-600 px-4 py-2 font-heading text-lg font-extrabold text-white shadow hover:bg-violet-500"
+            className="cursor-pointer rounded-2xl border-2 sm:border-4 border-violet-300 bg-violet-600 px-3 py-1.5 sm:px-4 sm:py-2 font-heading text-sm sm:text-lg font-extrabold text-white shadow hover:bg-violet-500"
           >
-            Đổi sang Level {level === 1 ? 2 : 1}
+            <span className="hidden sm:inline">Đổi sang </span>Level {level === 1 ? 2 : 1}
           </button>
         </div>
       </div>
 
       {/* Big Center Callout Banner when passing Letter Gate or Action */}
       {activePrompt && phase === 'running' && (
-        <div className="pointer-events-none absolute inset-x-0 top-20 flex flex-col items-center justify-center">
+        <div className="pointer-events-none absolute inset-x-3 top-14 sm:top-20 flex flex-col items-center justify-center">
           {activePrompt.isLetter ? (
-            <div className="flex flex-col items-center rounded-[36px] border-8 border-amber-400 bg-white/95 px-14 py-6 shadow-[0_14px_0_rgba(217,119,6,0.35)]">
-              <span className="font-letter text-8xl font-extrabold leading-none text-blue-700 md:text-9xl">
+            <div className="flex flex-col items-center rounded-[28px] sm:rounded-[36px] border-4 sm:border-8 border-amber-400 bg-white/95 px-7 py-3.5 sm:px-14 sm:py-6 shadow-[0_10px_0_rgba(217,119,6,0.35)]">
+              <span className="font-letter text-6xl sm:text-8xl md:text-9xl font-extrabold leading-none text-blue-700">
                 {activePrompt.text}
               </span>
-              <span className="font-heading mt-2 text-2xl font-extrabold text-pink-600">{activePrompt.sub}</span>
+              <span className="font-heading mt-1 sm:mt-2 text-base sm:text-2xl font-extrabold text-pink-600 text-center">
+                {activePrompt.sub}
+              </span>
             </div>
           ) : (
-            <div className="rounded-3xl border-4 border-white bg-blue-600/95 px-9 py-3 shadow-lg">
-              <span className="font-heading text-3xl font-extrabold tracking-wide text-white md:text-4xl">
+            <div className="rounded-2xl sm:rounded-3xl border-3 sm:border-4 border-white bg-blue-600/95 px-5 py-2 sm:px-9 sm:py-3 shadow-lg text-center">
+              <span className="font-heading text-xl sm:text-3xl md:text-4xl font-extrabold tracking-wide text-white">
                 {activePrompt.text}
               </span>
             </div>
@@ -494,11 +499,11 @@ export const Stage1Runner: React.FC<Stage1RunnerProps> = ({
 
       {/* Picture-in-Picture Pose Coach Card (Bottom Right, like video!) */}
       {phase === 'running' && (
-        <div className="pointer-events-none absolute bottom-20 right-5 flex flex-col items-center rounded-3xl border-4 border-blue-600 bg-white/95 p-4 shadow-xl">
-          <span className="rounded-full bg-blue-100 px-3 py-0.5 text-xs font-extrabold uppercase text-blue-800">
+        <div className="pointer-events-none absolute bottom-16 right-2.5 sm:bottom-20 sm:right-5 flex flex-col items-center rounded-2xl sm:rounded-3xl border-3 sm:border-4 border-blue-600 bg-white/95 p-2 sm:p-4 shadow-xl">
+          <span className="rounded-full bg-blue-100 px-2 sm:px-3 py-0.5 text-[10px] sm:text-xs font-extrabold uppercase text-blue-800">
             Động tác mẫu
           </span>
-          <svg viewBox="0 0 100 100" className="mt-1 h-24 w-24">
+          <svg viewBox="0 0 100 100" className="mt-0.5 sm:mt-1 h-14 w-14 sm:h-24 sm:w-24">
             <circle cx="50" cy="22" r="12" fill="#F59E0B" stroke="#1E3A8A" strokeWidth="3" />
             <line x1="50" y1="34" x2="50" y2="64" stroke="#1E3A8A" strokeWidth="6" strokeLinecap="round" />
             {activeCoachKind === 'jump' && (
@@ -542,7 +547,7 @@ export const Stage1Runner: React.FC<Stage1RunnerProps> = ({
               </>
             )}
           </svg>
-          <span className="font-heading text-base font-extrabold text-slate-800">
+          <span className="font-heading text-xs sm:text-base font-extrabold text-slate-800 text-center">
             {ACTION_META[activeCoachKind].label}
           </span>
         </div>
@@ -550,16 +555,16 @@ export const Stage1Runner: React.FC<Stage1RunnerProps> = ({
 
       {/* Countdown Overlay (3 - 2 - 1 - Let's Begin!) */}
       {phase === 'countdown' && (
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-900/65 backdrop-blur-xs">
-          <span className="rounded-full bg-amber-400 px-6 py-1.5 font-heading text-2xl font-extrabold text-slate-950">
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-900/65 p-4 text-center backdrop-blur-xs">
+          <span className="rounded-full bg-amber-400 px-5 py-1 sm:px-6 sm:py-1.5 font-heading text-lg sm:text-2xl font-extrabold text-slate-950">
             LEVEL {level}
           </span>
-          <div className="mt-5 flex h-44 w-44 items-center justify-center rounded-full border-8 border-amber-300 bg-amber-400 shadow-[0_0_50px_rgba(251,191,36,0.8)]">
-            <span className="font-heading text-7xl font-extrabold text-slate-950">
-              {countdownNum > 0 ? countdownNum : "Bắt đầu!"}
+          <div className="mt-4 sm:mt-5 flex h-32 w-32 sm:h-44 sm:w-44 items-center justify-center rounded-full border-6 sm:border-8 border-amber-300 bg-amber-400 shadow-[0_0_50px_rgba(251,191,36,0.8)]">
+            <span className="font-heading text-4xl sm:text-6xl font-extrabold text-slate-950">
+              {countdownNum > 0 ? countdownNum : 'Bắt đầu!'}
             </span>
           </div>
-          <p className="mt-5 font-heading text-3xl font-bold text-white">
+          <p className="mt-4 sm:mt-5 font-heading text-xl sm:text-3xl font-bold text-white">
             Các bạn nhỏ đứng dậy khởi động cùng cô nhé!
           </p>
         </div>
@@ -567,20 +572,22 @@ export const Stage1Runner: React.FC<Stage1RunnerProps> = ({
 
       {/* Level 1 Clear Modal */}
       {phase === 'level_clear' && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs">
-          <div className="flex max-w-lg flex-col items-center rounded-[36px] border-4 border-amber-400 bg-white p-9 text-center shadow-2xl">
-            <Trophy className="h-20 w-20 text-amber-500" />
-            <h2 className="font-heading mt-3 text-4xl font-extrabold text-blue-900">Hoàn thành Level 1!</h2>
-            <p className="mt-2 text-lg font-semibold text-slate-600">
+        <div className="absolute inset-0 z-30 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
+          <div className="flex max-w-lg flex-col items-center rounded-[28px] sm:rounded-[36px] border-4 border-amber-400 bg-white p-6 sm:p-9 text-center shadow-2xl">
+            <Trophy className="h-14 w-14 sm:h-20 sm:w-20 text-amber-500" />
+            <h2 className="font-heading mt-2 sm:mt-3 text-2xl sm:text-4xl font-extrabold text-blue-900">
+              Hoàn thành Level 1!
+            </h2>
+            <p className="mt-2 text-sm sm:text-lg font-semibold text-slate-600">
               Lớp mình vận động giỏi quá! Tăng tốc sang <strong>Level 2</strong> sôi động hơn nhé!
             </p>
             <button
               type="button"
               onClick={() => initLevel(2)}
-              className="mt-6 flex cursor-pointer items-center gap-3 rounded-2xl border-4 border-emerald-700 bg-emerald-500 px-9 py-4 font-heading text-2xl font-extrabold text-white shadow-[0_6px_0_#047857] hover:bg-emerald-400"
+              className="mt-5 sm:mt-6 flex cursor-pointer items-center gap-2 sm:gap-3 rounded-2xl border-4 border-emerald-700 bg-emerald-500 px-7 py-3.5 sm:px-9 sm:py-4 font-heading text-xl sm:text-2xl font-extrabold text-white shadow-[0_6px_0_#047857] hover:bg-emerald-400"
             >
               Chơi tiếp LEVEL 2
-              <ArrowRight className="h-7 w-7" />
+              <ArrowRight className="h-6 w-6 sm:h-7 sm:w-7" />
             </button>
           </div>
         </div>
@@ -588,20 +595,20 @@ export const Stage1Runner: React.FC<Stage1RunnerProps> = ({
 
       {/* Stage 1 Finished Modal */}
       {phase === 'finished' && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs">
-          <div className="flex max-w-xl flex-col items-center rounded-[36px] border-4 border-amber-400 bg-white p-9 text-center shadow-2xl">
-            <Trophy className="h-20 w-20 text-amber-500" />
-            <h2 className="font-heading mt-3 text-4xl font-extrabold text-emerald-700">
+        <div className="absolute inset-0 z-30 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
+          <div className="flex max-w-xl flex-col items-center rounded-[28px] sm:rounded-[36px] border-4 border-amber-400 bg-white p-6 sm:p-9 text-center shadow-2xl">
+            <Trophy className="h-14 w-14 sm:h-20 sm:w-20 text-amber-500" />
+            <h2 className="font-heading mt-2 sm:mt-3 text-2xl sm:text-4xl font-extrabold text-emerald-700">
               Xuất sắc vượt qua Chặng 1!
             </h2>
-            <p className="mt-2 text-lg font-semibold text-slate-600">
+            <p className="mt-2 text-sm sm:text-lg font-semibold text-slate-600">
               Các bạn nhỏ {lesson.className} đã sẵn sàng bước sang <strong>Chặng 2: Nghiêng đầu chọn chữ cái</strong> chưa nào?
             </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-4">
+            <div className="mt-5 sm:mt-6 flex flex-wrap justify-center gap-3 sm:gap-4">
               <button
                 type="button"
                 onClick={() => initLevel(1)}
-                className="flex cursor-pointer items-center gap-2 rounded-2xl border-2 border-slate-300 bg-slate-100 px-6 py-3.5 font-heading text-xl font-bold text-slate-700 hover:bg-slate-200"
+                className="flex cursor-pointer items-center gap-2 rounded-2xl border-2 border-slate-300 bg-slate-100 px-5 py-3 sm:px-6 sm:py-3.5 font-heading text-lg sm:text-xl font-bold text-slate-700 hover:bg-slate-200"
               >
                 <RotateCcw className="h-5 w-5" />
                 Chơi lại Chặng 1
@@ -609,7 +616,7 @@ export const Stage1Runner: React.FC<Stage1RunnerProps> = ({
               <button
                 type="button"
                 onClick={onNextStage}
-                className="flex cursor-pointer items-center gap-2 rounded-2xl border-4 border-blue-800 bg-blue-600 px-8 py-3.5 font-heading text-2xl font-extrabold text-white shadow-[0_6px_0_#1E3A8A] hover:bg-blue-500"
+                className="flex cursor-pointer items-center gap-2 rounded-2xl border-4 border-blue-800 bg-blue-600 px-6 py-3 sm:px-8 sm:py-3.5 font-heading text-xl sm:text-2xl font-extrabold text-white shadow-[0_6px_0_#1E3A8A] hover:bg-blue-500"
               >
                 Sang Chặng 2
                 <ArrowRight className="h-6 w-6" />
@@ -620,33 +627,33 @@ export const Stage1Runner: React.FC<Stage1RunnerProps> = ({
       )}
 
       {/* Bottom Teacher Toolbar */}
-      <div className="absolute inset-x-0 bottom-3 z-10 flex justify-center">
-        <div className="flex items-center gap-3 rounded-2xl border-2 border-white bg-white/90 px-5 py-2 shadow-lg backdrop-blur">
+      <div className="safe-pad absolute inset-x-2 bottom-2 sm:bottom-3 z-10 flex justify-center">
+        <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-3 rounded-2xl border-2 border-white bg-white/92 px-2.5 py-1.5 sm:px-5 sm:py-2 shadow-lg backdrop-blur">
           <button
             type="button"
             onClick={() => setPhase((p) => (p === 'running' ? 'paused' : p === 'paused' ? 'running' : p))}
-            className="flex cursor-pointer items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 font-heading text-base font-bold text-white hover:bg-blue-500"
+            className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-blue-600 px-3 py-1.5 sm:px-4 sm:py-2 font-heading text-xs sm:text-base font-bold text-white hover:bg-blue-500"
           >
             {phase === 'paused' ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
-            {phase === 'paused' ? 'Tiếp tục chạy' : 'Tạm dừng'}
+            <span>{phase === 'paused' ? 'Tiếp tục' : 'Tạm dừng'}</span>
           </button>
 
           <button
             type="button"
             onClick={() => initLevel(level)}
-            className="flex cursor-pointer items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 font-heading text-base font-bold text-white hover:bg-emerald-500"
+            className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-1.5 sm:px-4 sm:py-2 font-heading text-xs sm:text-base font-bold text-white hover:bg-emerald-500"
           >
             <RotateCcw className="h-4 w-4" />
-            Chơi lại Level {level}
+            <span>Chơi lại LV{level}</span>
           </button>
 
           <button
             type="button"
             onClick={onOpenVoiceSettings}
-            className="flex cursor-pointer items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 font-heading text-base font-bold text-white hover:bg-indigo-500"
+            className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-1.5 sm:px-4 sm:py-2 font-heading text-xs sm:text-base font-bold text-white hover:bg-indigo-500"
           >
             <Sliders className="h-4 w-4" />
-            Giọng nói
+            <span className="hidden sm:inline">Giọng nói</span>
           </button>
 
           <button
@@ -655,9 +662,9 @@ export const Stage1Runner: React.FC<Stage1RunnerProps> = ({
               audioManager.stopSpeaking();
               onNextStage();
             }}
-            className="flex cursor-pointer items-center gap-2 rounded-xl bg-pink-600 px-4 py-2 font-heading text-base font-bold text-white hover:bg-pink-500"
+            className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-pink-600 px-3 py-1.5 sm:px-4 sm:py-2 font-heading text-xs sm:text-base font-bold text-white hover:bg-pink-500"
           >
-            Qua Chặng 2
+            <span>Chặng 2</span>
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>

@@ -247,6 +247,40 @@ def collect_phrases() -> Tuple[Set[str], Set[str]]:
         teacher_phrases.add(pv)
         cute_phrases.add(pv)
 
+    # 7. Chặng 4: Bé vui hái táo (hướng dẫn, phản hồi tích cực & lời khen hoàn thành)
+    apple_feedbacks = [
+        "Quả táo này không có chữ cần tìm, bé chọn quả khác nhé!",
+        "Nhầm giỏ rồi, bé nhìn kỹ chữ trên giỏ nhé!",
+    ]
+    for af in apple_feedbacks:
+        teacher_phrases.add(af)
+        cute_phrases.add(af)
+
+    for ch in PRESCHOOL_LETTER_PHONETICS.keys():
+        teacher_phrases.add(f"Giỏ chữ {ch}")
+
+    for m in re.finditer(r"targetLetters:\s*\[([^\]]+)\]", lessons_src):
+        raw_items = [
+            x.strip().strip("'").strip('"').lower()
+            for x in m.group(1).split(",")
+            if x.strip()
+        ]
+        if not raw_items:
+            continue
+        comma_join = ", ".join(raw_items)
+        if len(raw_items) == 1:
+            and_join = raw_items[0]
+        elif len(raw_items) == 2:
+            and_join = f"{raw_items[0]} và {raw_items[1]}"
+        else:
+            and_join = f"{', '.join(raw_items[:-1])} và {raw_items[-1]}"
+
+        inst_phrase = f"Bé vui hái táo! Bé hãy kéo thả táo có chữ {comma_join} vào đúng giỏ nhé!"
+        win_phrase = f"Bé giỏi quá! Em đã hái đủ táo chữ {and_join}!"
+        teacher_phrases.add(inst_phrase)
+        teacher_phrases.add(win_phrase)
+        cute_phrases.add(win_phrase)
+
     return teacher_phrases, cute_phrases
 
 

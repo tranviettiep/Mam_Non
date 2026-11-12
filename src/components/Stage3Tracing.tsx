@@ -9,6 +9,7 @@ import { ConfettiOverlay } from './ConfettiOverlay';
 interface Stage3TracingProps {
   lesson: LessonConfig;
   onBackHub: () => void;
+  onNextStage: () => void;
   onOpenEditor: () => void;
   onOpenVoiceSettings: () => void;
 }
@@ -24,6 +25,7 @@ function pointsToPath(pts: Point2D[]): string {
 export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
   lesson,
   onBackHub,
+  onNextStage,
   onOpenEditor,
   onOpenVoiceSettings,
 }) => {
@@ -260,30 +262,33 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
   }, [activeStroke, progressIdx, letterCompleted]);
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center justify-between overflow-hidden bg-gradient-to-b from-sky-200 via-blue-100 to-indigo-100 p-4">
+    <div className="safe-pad relative flex h-full w-full flex-col items-center justify-between overflow-hidden bg-gradient-to-b from-sky-200 via-blue-100 to-indigo-100 p-2 sm:p-4">
       <ConfettiOverlay active={letterCompleted} />
 
-      {/* Main Classroom Tracing Board (Matches c3_tv.jpg!) */}
-      <div className="relative flex h-full w-full max-w-6xl flex-col justify-between rounded-[36px] border-4 border-blue-400 bg-gradient-to-b from-sky-100/95 to-white px-6 py-4 shadow-[0_12px_0_rgba(59,130,246,0.22)]">
+      {/* Main Classroom Tracing Board */}
+      <div className="relative flex h-full w-full max-w-6xl flex-col justify-between rounded-[28px] sm:rounded-[36px] border-4 border-blue-400 bg-gradient-to-b from-sky-100/95 to-white px-3 py-2.5 sm:px-6 sm:py-4 shadow-[0_10px_0_rgba(59,130,246,0.22)]">
         {/* Top Bar inside Board */}
-        <header className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+        <header className="flex flex-wrap items-center justify-between gap-2 md:flex-nowrap md:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               type="button"
               onClick={() => {
                 audioManager.stopSpeaking();
                 onBackHub();
               }}
-              className="flex cursor-pointer items-center gap-1.5 rounded-2xl border-2 border-slate-300 bg-white px-4 py-2 font-heading text-base font-bold text-slate-700 shadow-xs hover:bg-slate-50"
+              className="flex cursor-pointer items-center gap-1.5 rounded-2xl border-2 border-slate-300 bg-white px-3 py-1.5 sm:px-4 sm:py-2 font-heading text-sm sm:text-base font-bold text-slate-700 shadow-xs hover:bg-slate-50"
             >
               <ArrowLeft className="h-4 w-4" />
-              Sảnh chính
+              <span className="hidden sm:inline">Sảnh chính</span>
+              <span className="sm:hidden">Sảnh</span>
             </button>
 
             {/* Cute Star Mascot + Current Letter Badge */}
-            <div className="flex items-center gap-2 rounded-2xl border-4 border-amber-300 bg-amber-100 px-4 py-1.5 shadow-xs">
-              <Star className="h-7 w-7 fill-amber-400 text-amber-500" />
-              <span className="font-letter text-3xl font-extrabold text-blue-700">{letterDef.letter}</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 rounded-2xl border-3 sm:border-4 border-amber-300 bg-amber-100 px-3 py-1 sm:px-4 sm:py-1.5 shadow-xs">
+              <Star className="h-5 w-5 sm:h-7 sm:w-7 fill-amber-400 text-amber-500" />
+              <span className="font-letter text-2xl sm:text-3xl font-extrabold text-blue-700">
+                {letterDef.letter}
+              </span>
             </div>
           </div>
 
@@ -294,22 +299,22 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
               activeStroke &&
               audioManager.speakVi(activeStrokeInfo.instruction, activeStrokeInfo.customAudioUrl)
             }
-            className="flex cursor-pointer items-center gap-2 rounded-full border-2 border-blue-200 bg-white px-6 py-2 shadow-xs hover:bg-blue-50"
+            className="order-last flex w-full md:order-none md:w-auto cursor-pointer items-center justify-center gap-2 rounded-2xl md:rounded-full border-2 border-blue-200 bg-white px-3.5 py-1.5 sm:px-6 sm:py-2 shadow-xs hover:bg-blue-50"
           >
-            <span className="font-heading text-xl font-extrabold text-blue-900 md:text-2xl">
+            <span className="font-heading text-sm sm:text-lg md:text-2xl font-extrabold text-blue-900">
               {letterCompleted
                 ? `Hoàn thành ${letterDef.pronounce} xuất sắc!`
                 : `Nét ${strokeIdx + 1}/${letterDef.strokes.length}: ${activeStrokeInfo.instruction}`}
             </span>
-            <Volume2 className="h-5 w-5 shrink-0 text-blue-600" />
+            <Volume2 className="h-4 w-4 sm:h-5 sm:w-5 shrink-0 text-blue-600" />
           </button>
 
           {/* Quick Extra Letter Picker, Editor & Voice Settings for Teachers */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               type="button"
               onClick={onOpenEditor}
-              className="flex cursor-pointer items-center gap-1.5 rounded-xl border-2 border-purple-200 bg-purple-50 px-3 py-1.5 font-heading text-sm font-bold text-purple-800 hover:bg-purple-100"
+              className="hidden sm:flex cursor-pointer items-center gap-1.5 rounded-xl border-2 border-purple-200 bg-purple-50 px-3 py-1.5 font-heading text-sm font-bold text-purple-800 hover:bg-purple-100"
               title="Chỉnh sửa lời hướng dẫn viết Chặng 3"
             >
               <Edit3 className="h-4 w-4" />
@@ -318,18 +323,18 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
             <button
               type="button"
               onClick={onOpenVoiceSettings}
-              className="flex cursor-pointer items-center gap-1.5 rounded-xl border-2 border-indigo-200 bg-indigo-50 px-3 py-1.5 font-heading text-sm font-bold text-indigo-800 hover:bg-indigo-100"
+              className="flex cursor-pointer items-center gap-1 rounded-xl border-2 border-indigo-200 bg-indigo-50 px-2.5 py-1.5 sm:px-3 font-heading text-xs sm:text-sm font-bold text-indigo-800 hover:bg-indigo-100"
             >
               <Sliders className="h-4 w-4" />
-              Giọng nói
+              <span className="hidden sm:inline">Giọng nói</span>
             </button>
-            <div className="hidden items-center gap-1.5 lg:flex">
-              <span className="text-xs font-bold text-slate-500">Thư viện:</span>
+            <div className="flex items-center gap-1">
+              <span className="hidden xl:inline text-xs font-bold text-slate-500">Thư viện:</span>
               <select
                 aria-label="Chọn chữ cái tập viết"
                 value={activeLetterKey}
                 onChange={(e) => selectLetter(e.target.value)}
-                className="font-letter cursor-pointer rounded-xl border-2 border-blue-300 bg-white px-3 py-1.5 text-base font-bold text-blue-900"
+                className="font-letter cursor-pointer rounded-xl border-2 border-blue-300 bg-white px-2 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-base font-bold text-blue-900"
               >
                 {AVAILABLE_TRACING_LETTERS.map((ch) => (
                   <option key={ch} value={ch}>
@@ -342,8 +347,8 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
         </header>
 
         {/* Interactive Center SVG Tracing Area */}
-        <main className="relative flex flex-1 items-center justify-center overflow-hidden py-1">
-          <div className="relative aspect-square h-full max-h-[430px] rounded-[32px] border-2 border-dashed border-sky-200 bg-white/85 shadow-inner">
+        <main className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden py-1">
+          <div className="relative aspect-square max-h-full w-full max-w-[min(85vw,430px)] rounded-[28px] sm:rounded-[32px] border-2 border-dashed border-sky-200 bg-white/85 shadow-inner">
             {/* Primary writing grid lines (subtle 4-square schoolbook guide) */}
             <svg
               ref={svgRef}
@@ -442,35 +447,47 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
               )}
             </svg>
 
-            {/* Completion Celebration Modal inside Canvas (Matches c3_done.jpg!) */}
+            {/* Completion Celebration Modal inside Canvas */}
             {letterCompleted && (
-              <div className="absolute inset-0 z-20 flex items-center justify-center rounded-[32px] bg-slate-900/30 backdrop-blur-[2px]">
-                <div className="flex flex-col items-center rounded-[32px] border-4 border-amber-400 bg-white px-9 py-7 text-center shadow-2xl">
+              <div className="absolute inset-0 z-20 flex items-center justify-center rounded-[28px] sm:rounded-[32px] bg-slate-900/30 p-3 backdrop-blur-[2px]">
+                <div className="flex flex-col items-center rounded-[28px] sm:rounded-[32px] border-4 border-amber-400 bg-white px-5 py-5 sm:px-9 sm:py-7 text-center shadow-2xl">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-9 w-9 text-amber-500" />
-                    <Trophy className="h-14 w-14 text-amber-500" />
-                    <Sparkles className="h-9 w-9 text-amber-500" />
+                    <Sparkles className="h-7 w-7 sm:h-9 sm:w-9 text-amber-500" />
+                    <Trophy className="h-11 w-11 sm:h-14 sm:w-14 text-amber-500" />
+                    <Sparkles className="h-7 w-7 sm:h-9 sm:w-9 text-amber-500" />
                   </div>
-                  <h2 className="font-heading mt-2 text-4xl font-extrabold text-blue-900">BÉ GIỎI LẮM!</h2>
-                  <p className="mt-1 text-base font-bold text-slate-600">
-                    Bé đã tô hoàn chỉnh <strong className="font-letter text-xl text-blue-700">{letterDef.letter}</strong> thật đẹp!
+                  <h2 className="font-heading mt-1.5 sm:mt-2 text-2xl sm:text-4xl font-extrabold text-blue-900">
+                    BÉ GIỎI LẮM!
+                  </h2>
+                  <p className="mt-1 text-sm sm:text-base font-bold text-slate-600">
+                    Bé đã tô hoàn chỉnh <strong className="font-letter text-lg sm:text-xl text-blue-700">{letterDef.letter}</strong> thật đẹp!
                   </p>
-                  <div className="mt-5 flex items-center gap-3">
+                  <div className="mt-4 sm:mt-5 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
                     <button
                       type="button"
                       onClick={() => resetCurrentLetter(true)}
-                      className="flex cursor-pointer items-center gap-2 rounded-2xl border-2 border-amber-600 bg-amber-400 px-5 py-2.5 font-heading text-lg font-extrabold text-slate-950 shadow-[0_4px_0_#B45309] hover:bg-amber-300"
+                      className="flex cursor-pointer items-center gap-1.5 rounded-2xl border-2 border-amber-600 bg-amber-400 px-4 py-2 sm:px-5 sm:py-2.5 font-heading text-base sm:text-lg font-extrabold text-slate-950 shadow-[0_4px_0_#B45309] hover:bg-amber-300"
                     >
-                      <RotateCcw className="h-5 w-5" />
+                      <RotateCcw className="h-4 w-4 sm:h-5 sm:w-5" />
                       Viết lại
                     </button>
                     <button
                       type="button"
                       onClick={handleNextLetter}
-                      className="flex cursor-pointer items-center gap-2 rounded-2xl border-2 border-emerald-700 bg-emerald-500 px-5 py-2.5 font-heading text-lg font-extrabold text-white shadow-[0_4px_0_#047857] hover:bg-emerald-400"
+                      className="flex cursor-pointer items-center gap-1.5 rounded-2xl border-2 border-blue-700 bg-blue-600 px-4 py-2 sm:px-5 sm:py-2.5 font-heading text-base sm:text-lg font-extrabold text-white shadow-[0_4px_0_#1E3A8A] hover:bg-blue-500"
                     >
-                      Tiếp tục
-                      <ArrowRight className="h-5 w-5" />
+                      Chữ tiếp
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        audioManager.stopSpeaking();
+                        onNextStage();
+                      }}
+                      className="flex cursor-pointer items-center gap-1.5 rounded-2xl border-2 border-emerald-700 bg-emerald-500 px-4 py-2 sm:px-5 sm:py-2.5 font-heading text-base sm:text-lg font-extrabold text-white shadow-[0_4px_0_#047857] hover:bg-emerald-400"
+                    >
+                      Sang Chặng 4
+                      <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
                     </button>
                   </div>
                 </div>
@@ -479,17 +496,17 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
           </div>
         </main>
 
-        {/* Bottom 6-Button Action Bar (Exact match to video Stage 3!) */}
-        <footer className="flex flex-wrap items-center justify-center gap-3 pt-1">
+        {/* Bottom Action Bar */}
+        <footer className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5 pt-1">
           <button
             type="button"
             onClick={() => {
               resetCurrentLetter(false);
               triggerHint(0);
             }}
-            className="flex cursor-pointer items-center gap-2 rounded-2xl border-2 border-emerald-700 bg-emerald-500 px-5 py-2.5 font-heading text-lg font-extrabold text-white shadow-[0_5px_0_#047857] transition hover:bg-emerald-400 active:translate-y-0.5"
+            className="flex cursor-pointer items-center gap-1.5 rounded-2xl border-2 border-emerald-700 bg-emerald-500 px-3 py-2 sm:px-5 sm:py-2.5 font-heading text-sm sm:text-lg font-extrabold text-white shadow-[0_4px_0_#047857] transition hover:bg-emerald-400 active:translate-y-0.5"
           >
-            <Play className="h-5 w-5 fill-current" />
+            <Play className="h-4 w-4 sm:h-5 sm:w-5 fill-current" />
             BẮT ĐẦU
           </button>
 
@@ -500,9 +517,9 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
                 key={ch}
                 type="button"
                 onClick={() => selectLetter(ch)}
-                className={`font-letter cursor-pointer rounded-2xl border-2 px-5 py-2.5 text-lg font-extrabold shadow-[0_5px_0_rgba(30,58,138,0.45)] transition active:translate-y-0.5 ${
+                className={`font-letter cursor-pointer rounded-2xl border-2 px-3 py-2 sm:px-5 sm:py-2.5 text-sm sm:text-lg font-extrabold shadow-[0_4px_0_rgba(30,58,138,0.45)] transition active:translate-y-0.5 ${
                   selected
-                    ? 'border-blue-900 bg-blue-700 text-white ring-4 ring-blue-300'
+                    ? 'border-blue-900 bg-blue-700 text-white ring-3 sm:ring-4 ring-blue-300'
                     : 'border-blue-700 bg-blue-500 text-white hover:bg-blue-400'
                 }`}
               >
@@ -514,28 +531,31 @@ export const Stage3Tracing: React.FC<Stage3TracingProps> = ({
           <button
             type="button"
             onClick={() => resetCurrentLetter(true)}
-            className="flex cursor-pointer items-center gap-2 rounded-2xl border-2 border-amber-600 bg-amber-400 px-5 py-2.5 font-heading text-lg font-extrabold text-slate-950 shadow-[0_5px_0_#B45309] transition hover:bg-amber-300 active:translate-y-0.5"
+            className="flex cursor-pointer items-center gap-1.5 rounded-2xl border-2 border-amber-600 bg-amber-400 px-3 py-2 sm:px-5 sm:py-2.5 font-heading text-sm sm:text-lg font-extrabold text-slate-950 shadow-[0_4px_0_#B45309] transition hover:bg-amber-300 active:translate-y-0.5"
           >
-            <RotateCcw className="h-5 w-5" />
+            <RotateCcw className="h-4 w-4 sm:h-5 sm:w-5" />
             VIẾT LẠI
           </button>
 
           <button
             type="button"
             onClick={() => triggerHint()}
-            className="flex cursor-pointer items-center gap-2 rounded-2xl border-2 border-indigo-800 bg-indigo-600 px-5 py-2.5 font-heading text-lg font-extrabold text-white shadow-[0_5px_0_#3730A3] transition hover:bg-indigo-500 active:translate-y-0.5"
+            className="flex cursor-pointer items-center gap-1.5 rounded-2xl border-2 border-indigo-800 bg-indigo-600 px-3 py-2 sm:px-5 sm:py-2.5 font-heading text-sm sm:text-lg font-extrabold text-white shadow-[0_4px_0_#3730A3] transition hover:bg-indigo-500 active:translate-y-0.5"
           >
-            <Lightbulb className="h-5 w-5" />
+            <Lightbulb className="h-4 w-4 sm:h-5 sm:w-5" />
             GỢI Ý
           </button>
 
           <button
             type="button"
-            onClick={handleNextLetter}
-            className="flex cursor-pointer items-center gap-2 rounded-2xl border-2 border-fuchsia-900 bg-fuchsia-600 px-5 py-2.5 font-heading text-lg font-extrabold text-white shadow-[0_5px_0_#701A75] transition hover:bg-fuchsia-500 active:translate-y-0.5"
+            onClick={() => {
+              audioManager.stopSpeaking();
+              onNextStage();
+            }}
+            className="flex cursor-pointer items-center gap-1.5 rounded-2xl border-2 border-emerald-800 bg-emerald-600 px-3 py-2 sm:px-5 sm:py-2.5 font-heading text-sm sm:text-lg font-extrabold text-white shadow-[0_4px_0_#065F46] transition hover:bg-emerald-500 active:translate-y-0.5"
           >
-            TIẾP TỤC
-            <ArrowRight className="h-5 w-5" />
+            HÁI TÁO
+            <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
         </footer>
       </div>

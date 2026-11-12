@@ -428,13 +428,13 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
   if (!currentQuestion) return null;
 
   return (
-    <div className="relative flex h-full w-full flex-col justify-between overflow-hidden bg-gradient-to-b from-sky-400 via-sky-200 to-emerald-200 px-5 py-3">
+    <div className="safe-pad relative flex h-full w-full flex-col justify-between overflow-hidden bg-gradient-to-b from-sky-400 via-sky-200 to-emerald-200 px-2.5 py-2 sm:px-5 sm:py-3">
       <ConfettiOverlay active={celebrateBurst || completedAll} />
 
       {/* Decorative Sun & Meadow */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         <div className="absolute -bottom-24 left-1/2 h-44 w-[125%] -translate-x-1/2 rounded-[100%] bg-emerald-500/45" />
-        <div className="animate-float-slow absolute right-8 top-10 flex h-24 w-24 items-center justify-center rounded-full border-4 border-amber-300 bg-amber-400 shadow-[0_0_40px_rgba(251,191,36,0.75)]">
+        <div className="animate-float-slow hidden md:flex absolute right-8 top-10 h-24 w-24 items-center justify-center rounded-full border-4 border-amber-300 bg-amber-400 shadow-[0_0_40px_rgba(251,191,36,0.75)]">
           <div className="flex items-center gap-3">
             <span className="h-2.5 w-2.5 rounded-full bg-amber-950" />
             <span className="h-2 w-3 rounded-b-full bg-rose-600" />
@@ -444,15 +444,15 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
       </div>
 
       {/* Top Row: Back + Guide | Wooden Question Sign | Star Counter */}
-      <header className="relative z-10 flex items-start justify-between gap-4">
-        <div className="flex items-center gap-2">
+      <header className="relative z-10 flex flex-wrap items-start justify-between gap-2 md:flex-nowrap md:gap-4">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={() => {
               audioManager.stopSpeaking();
               onBackHub();
             }}
-            className="flex cursor-pointer items-center gap-1.5 rounded-2xl border-2 border-white bg-slate-800/85 px-3.5 py-2 font-heading text-base font-bold text-white shadow hover:bg-slate-700"
+            className="flex cursor-pointer items-center gap-1.5 rounded-2xl border-2 border-white bg-slate-800/85 px-3 py-1.5 sm:px-3.5 sm:py-2 font-heading text-sm sm:text-base font-bold text-white shadow hover:bg-slate-700"
           >
             <ArrowLeft className="h-4 w-4" />
             Sảnh
@@ -460,52 +460,52 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
           <button
             type="button"
             onClick={() => setShowGuide((g) => !g)}
-            className="flex cursor-pointer items-center gap-1.5 rounded-2xl border-2 border-white bg-white/90 px-4 py-2 font-heading text-base font-extrabold text-slate-800 shadow hover:bg-white"
+            className="flex cursor-pointer items-center gap-1.5 rounded-2xl border-2 border-white bg-white/90 px-3 py-1.5 sm:px-4 sm:py-2 font-heading text-sm sm:text-base font-extrabold text-slate-800 shadow hover:bg-white"
           >
             <HelpCircle className="h-4 w-4 text-blue-600" />
-            Hướng dẫn
+            <span className="hidden sm:inline">Hướng dẫn</span>
           </button>
         </div>
 
         {/* Wooden Question Signboard */}
-        <div className="flex max-w-3xl flex-1 flex-col items-center">
+        <div className="order-last flex w-full flex-col items-center md:order-none md:max-w-3xl md:flex-1">
           <button
             type="button"
             onClick={() => speakCurrentQuestion(qIndex)}
-            className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-[28px] border-[6px] border-amber-700 bg-amber-50 px-8 py-3.5 text-center shadow-[0_8px_0_#92400E] transition hover:bg-white active:translate-y-0.5"
+            className="flex w-full cursor-pointer items-center justify-center gap-2 sm:gap-3 rounded-2xl sm:rounded-[28px] border-4 sm:border-[6px] border-amber-700 bg-amber-50 px-3.5 py-2 sm:px-8 sm:py-3.5 text-center shadow-[0_6px_0_#92400E] transition hover:bg-white active:translate-y-0.5"
           >
-            <span className="font-heading text-2xl font-extrabold text-amber-950 md:text-4xl">
+            <span className="font-heading text-lg sm:text-2xl md:text-4xl font-extrabold text-amber-950">
               {currentQuestion.prompt}
             </span>
-            <Volume2 className="h-7 w-7 shrink-0 text-amber-700" />
+            <Volume2 className="h-5 w-5 sm:h-7 sm:w-7 shrink-0 text-amber-700" />
           </button>
 
-          <div className="mt-1.5 rounded-full bg-white/85 px-5 py-0.5 text-sm font-extrabold text-blue-900 shadow-xs">
+          <div className="mt-1 rounded-full bg-white/85 px-3.5 py-0.5 text-xs sm:text-sm font-extrabold text-blue-900 shadow-xs">
             {statusLabel}
           </div>
         </div>
 
         {/* Top-Right Star Score Pill */}
-        <div className="flex items-center gap-2 rounded-full border-4 border-amber-300 bg-white px-5 py-2 shadow-md">
-          <span className="font-heading text-xl font-extrabold text-slate-800">
+        <div className="flex items-center gap-1.5 sm:gap-2 rounded-full border-3 sm:border-4 border-amber-300 bg-white px-3.5 py-1 sm:px-5 sm:py-2 shadow-md">
+          <span className="font-heading text-base sm:text-xl font-extrabold text-slate-800">
             {stars}/{questions.length}
           </span>
-          <Star className="h-6 w-6 fill-amber-400 text-amber-500" />
+          <Star className="h-5 w-5 sm:h-6 sm:w-6 fill-amber-400 text-amber-500" />
         </div>
       </header>
 
-      {/* Center Stage: Left Card | Live Mirrored Webcam Frame | Right Card */}
-      <main className="relative z-10 mx-auto grid w-full max-w-6xl flex-1 grid-cols-12 items-center gap-5 py-2">
+      {/* Center Stage: Mobile stacks Webcam top + Left/Right cards side-by-side; Desktop/Tablet 3 columns */}
+      <main className="relative z-10 mx-auto grid w-full max-w-6xl flex-1 grid-cols-12 items-center gap-2.5 sm:gap-5 py-1 sm:py-2 min-h-0">
         {/* LEFT ANSWER CARD */}
-        <div className="col-span-4 flex flex-col items-center">
+        <div className="order-2 col-span-6 flex flex-col items-center md:order-1 md:col-span-4">
           <button
             type="button"
             disabled={fsmRef.current.state === 'LOCKED' || completedAll}
             onClick={() => evaluateChoice('left')}
-            className={`relative flex w-full cursor-pointer flex-col items-center justify-center rounded-[36px] border-[10px] bg-amber-50/95 px-4 py-7 shadow-[0_12px_0_rgba(30,64,175,0.28)] transition duration-150 ${
+            className={`relative flex w-full cursor-pointer flex-col items-center justify-center rounded-3xl md:rounded-[36px] border-[6px] md:border-[10px] bg-amber-50/95 px-2 py-3.5 sm:px-4 sm:py-7 shadow-[0_8px_0_rgba(30,64,175,0.28)] transition duration-150 ${
               feedback?.side === 'left'
                 ? feedback.correct
-                  ? 'scale-105 border-emerald-500 ring-8 ring-emerald-300'
+                  ? 'scale-105 border-emerald-500 ring-6 md:ring-8 ring-emerald-300'
                   : 'border-amber-500 opacity-85'
                 : dwellSide === 'left'
                   ? 'scale-[1.03] border-blue-600 ring-4 ring-blue-300'
@@ -513,24 +513,26 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
             }`}
           >
             {/* Top Star Medallion */}
-            <div className="absolute -top-7 flex h-14 w-14 items-center justify-center rounded-full border-4 border-amber-200 bg-amber-400 shadow">
+            <div className="hidden sm:flex absolute -top-7 h-14 w-14 items-center justify-center rounded-full border-4 border-amber-200 bg-amber-400 shadow">
               <Star className="h-8 w-8 fill-amber-100 text-amber-700" />
             </div>
 
             <span
-              className={`font-letter my-3 font-extrabold leading-none text-blue-700 ${
-                currentQuestion.leftOption.length <= 2 ? 'text-8xl md:text-9xl' : 'text-5xl md:text-6xl'
+              className={`font-letter my-1.5 sm:my-3 font-extrabold leading-none text-blue-700 ${
+                currentQuestion.leftOption.length <= 2
+                  ? 'text-5xl sm:text-8xl lg:text-9xl'
+                  : 'text-2xl sm:text-5xl lg:text-6xl'
               }`}
             >
               {currentQuestion.leftOption}
             </span>
 
-            <span className="font-heading mt-2 text-xl font-extrabold uppercase tracking-wider text-blue-800">
+            <span className="font-heading mt-1 sm:mt-2 text-xs sm:text-lg md:text-xl font-extrabold uppercase tracking-wider text-blue-800">
               NGHIÊNG TRÁI
             </span>
 
             {/* Dwell Progress Bar */}
-            <div className="mt-3 h-3 w-3/4 overflow-hidden rounded-full bg-blue-100">
+            <div className="mt-2 sm:mt-3 h-2.5 sm:h-3 w-3/4 overflow-hidden rounded-full bg-blue-100">
               <div
                 className="h-full rounded-full bg-blue-600 transition-all duration-75"
                 style={{ width: dwellSide === 'left' ? `${dwellPct}%` : '0%' }}
@@ -540,11 +542,11 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
         </div>
 
         {/* CENTER WEBCAM FRAME */}
-        <div className="col-span-4 flex flex-col items-center">
-          <div className="relative w-full overflow-hidden rounded-[36px] border-[10px] border-amber-300 bg-slate-900 shadow-[0_12px_0_#D97706]">
+        <div className="order-1 col-span-12 mx-auto flex w-full max-w-[205px] sm:max-w-[275px] flex-col items-center md:order-2 md:col-span-4 md:max-w-none">
+          <div className="relative w-full overflow-hidden rounded-3xl md:rounded-[36px] border-[6px] md:border-[10px] border-amber-300 bg-slate-900 shadow-[0_8px_0_#D97706]">
             {/* Top Camera Lens Cap */}
-            <div className="absolute left-1/2 top-2 z-20 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full border-4 border-white bg-slate-800 shadow">
-              <div className="h-4 w-4 rounded-full bg-sky-400" />
+            <div className="absolute left-1/2 top-1.5 md:top-2 z-20 flex h-7 w-7 md:h-10 md:w-10 -translate-x-1/2 items-center justify-center rounded-full border-3 md:border-4 border-white bg-slate-800 shadow">
+              <div className="h-2.5 w-2.5 md:h-4 md:w-4 rounded-full bg-sky-400" />
             </div>
 
             <div className="aspect-[4/3] w-full bg-slate-800">
@@ -558,15 +560,15 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
               />
 
               {cameraStatus !== 'ready' && (
-                <div className="flex h-full w-full flex-col items-center justify-center p-5 text-center text-white">
-                  <Camera className="mb-2 h-12 w-12 text-amber-300" />
-                  <p className="font-heading text-lg font-bold">
+                <div className="flex h-full w-full flex-col items-center justify-center p-3 sm:p-5 text-center text-white">
+                  <Camera className="mb-1 sm:mb-2 h-8 w-8 sm:h-12 sm:w-12 text-amber-300" />
+                  <p className="font-heading text-sm sm:text-lg font-bold">
                     {cameraStatus === 'loading'
                       ? 'Đang bật Camera AI...'
                       : 'Chế độ không cần Camera'}
                   </p>
-                  <p className="mt-1 text-xs text-slate-300">
-                    Bấm phím mũi tên Trái ⬅ / Phải ➡ hoặc chạm trực tiếp vào 2 thẻ đáp án hai bên!
+                  <p className="mt-0.5 text-[11px] sm:text-xs text-slate-300">
+                    Chạm trực tiếp vào 2 thẻ đáp án hoặc dùng phím ⬅ / ➡!
                   </p>
                 </div>
               )}
@@ -575,7 +577,7 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
             {/* Instant Answer Feedback Banner inside Frame */}
             {feedback && (
               <div
-                className={`absolute inset-x-0 bottom-0 z-20 py-2.5 text-center font-heading text-2xl font-extrabold text-white ${
+                className={`absolute inset-x-0 bottom-0 z-20 py-1.5 sm:py-2.5 text-center font-heading text-sm sm:text-xl md:text-2xl font-extrabold text-white ${
                   feedback.correct ? 'bg-emerald-500/95' : 'bg-amber-500/95'
                 }`}
               >
@@ -586,38 +588,40 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
         </div>
 
         {/* RIGHT ANSWER CARD */}
-        <div className="col-span-4 flex flex-col items-center">
+        <div className="order-3 col-span-6 flex flex-col items-center md:order-3 md:col-span-4">
           <button
             type="button"
             disabled={fsmRef.current.state === 'LOCKED' || completedAll}
             onClick={() => evaluateChoice('right')}
-            className={`relative flex w-full cursor-pointer flex-col items-center justify-center rounded-[36px] border-[10px] bg-amber-50/95 px-4 py-7 shadow-[0_12px_0_rgba(190,24,93,0.28)] transition duration-150 ${
+            className={`relative flex w-full cursor-pointer flex-col items-center justify-center rounded-3xl md:rounded-[36px] border-[6px] md:border-[10px] bg-amber-50/95 px-2 py-3.5 sm:px-4 sm:py-7 shadow-[0_8px_0_rgba(190,24,93,0.28)] transition duration-150 ${
               feedback?.side === 'right'
                 ? feedback.correct
-                  ? 'scale-105 border-emerald-500 ring-8 ring-emerald-300'
+                  ? 'scale-105 border-emerald-500 ring-6 md:ring-8 ring-emerald-300'
                   : 'border-amber-500 opacity-85'
                 : dwellSide === 'right'
                   ? 'scale-[1.03] border-pink-600 ring-4 ring-pink-300'
                   : 'border-pink-500 hover:scale-[1.02]'
             }`}
           >
-            <div className="absolute -top-7 flex h-14 w-14 items-center justify-center rounded-full border-4 border-amber-200 bg-amber-400 shadow">
+            <div className="hidden sm:flex absolute -top-7 h-14 w-14 items-center justify-center rounded-full border-4 border-amber-200 bg-amber-400 shadow">
               <Star className="h-8 w-8 fill-amber-100 text-amber-700" />
             </div>
 
             <span
-              className={`font-letter my-3 font-extrabold leading-none text-pink-700 ${
-                currentQuestion.rightOption.length <= 2 ? 'text-8xl md:text-9xl' : 'text-5xl md:text-6xl'
+              className={`font-letter my-1.5 sm:my-3 font-extrabold leading-none text-pink-700 ${
+                currentQuestion.rightOption.length <= 2
+                  ? 'text-5xl sm:text-8xl lg:text-9xl'
+                  : 'text-2xl sm:text-5xl lg:text-6xl'
               }`}
             >
               {currentQuestion.rightOption}
             </span>
 
-            <span className="font-heading mt-2 text-xl font-extrabold uppercase tracking-wider text-pink-800">
+            <span className="font-heading mt-1 sm:mt-2 text-xs sm:text-lg md:text-xl font-extrabold uppercase tracking-wider text-pink-800">
               NGHIÊNG PHẢI
             </span>
 
-            <div className="mt-3 h-3 w-3/4 overflow-hidden rounded-full bg-pink-100">
+            <div className="mt-2 sm:mt-3 h-2.5 sm:h-3 w-3/4 overflow-hidden rounded-full bg-pink-100">
               <div
                 className="h-full rounded-full bg-pink-600 transition-all duration-75"
                 style={{ width: dwellSide === 'right' ? `${dwellPct}%` : '0%' }}
@@ -629,22 +633,22 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
 
       {/* Quiz Complete Overlay Banner */}
       {completedAll && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center bg-slate-900/55 backdrop-blur-xs">
-          <div className="flex max-w-xl flex-col items-center rounded-[36px] border-4 border-amber-400 bg-white p-8 text-center shadow-2xl">
-            <Trophy className="h-20 w-20 text-amber-500" />
-            <h2 className="font-heading mt-2 text-4xl font-extrabold text-blue-900">
+        <div className="absolute inset-0 z-30 flex items-center justify-center bg-slate-900/55 p-4 backdrop-blur-xs">
+          <div className="flex max-w-xl flex-col items-center rounded-[28px] sm:rounded-[36px] border-4 border-amber-400 bg-white p-6 sm:p-8 text-center shadow-2xl">
+            <Trophy className="h-14 w-14 sm:h-20 sm:w-20 text-amber-500" />
+            <h2 className="font-heading mt-2 text-2xl sm:text-4xl font-extrabold text-blue-900">
               Hoàn thành {stars}/{questions.length} câu hỏi!
             </h2>
-            <p className="mt-2 text-lg font-semibold text-slate-600">
+            <p className="mt-2 text-sm sm:text-lg font-semibold text-slate-600">
               Cô có thể bấm <strong>Chơi lại</strong> cho lượt bạn tiếp theo lên thi tài, hoặc chuyển sang <strong>Chặng 3: Tập tô chữ cái</strong>!
             </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-4">
+            <div className="mt-5 sm:mt-6 flex flex-wrap justify-center gap-3 sm:gap-4">
               <button
                 type="button"
                 onClick={handleRestartQuiz}
-                className="flex cursor-pointer items-center gap-2 rounded-2xl border-4 border-emerald-700 bg-emerald-500 px-7 py-3.5 font-heading text-2xl font-extrabold text-white shadow-[0_6px_0_#047857] hover:bg-emerald-400"
+                className="flex cursor-pointer items-center gap-2 rounded-2xl border-4 border-emerald-700 bg-emerald-500 px-5 py-3 sm:px-7 sm:py-3.5 font-heading text-xl sm:text-2xl font-extrabold text-white shadow-[0_6px_0_#047857] hover:bg-emerald-400"
               >
-                <RotateCcw className="h-6 w-6" />
+                <RotateCcw className="h-5 w-5 sm:h-6 sm:w-6" />
                 Chơi lại lượt mới
               </button>
               <button
@@ -653,10 +657,10 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
                   audioManager.stopSpeaking();
                   onNextStage();
                 }}
-                className="flex cursor-pointer items-center gap-2 rounded-2xl border-4 border-pink-800 bg-pink-600 px-7 py-3.5 font-heading text-2xl font-extrabold text-white shadow-[0_6px_0_#9D174D] hover:bg-pink-500"
+                className="flex cursor-pointer items-center gap-2 rounded-2xl border-4 border-pink-800 bg-pink-600 px-5 py-3 sm:px-7 sm:py-3.5 font-heading text-xl sm:text-2xl font-extrabold text-white shadow-[0_6px_0_#9D174D] hover:bg-pink-500"
               >
                 Sang Chặng 3
-                <ArrowRight className="h-6 w-6" />
+                <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
             </div>
           </div>
@@ -666,17 +670,17 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
       {/* Quick Guide Modal */}
       {showGuide && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-slate-900/60 p-4">
-          <div className="max-w-lg rounded-3xl border-4 border-blue-500 bg-white p-7 shadow-2xl">
-            <h3 className="font-heading text-3xl font-extrabold text-blue-900">Hướng dẫn Chặng 2</h3>
-            <ul className="mt-3 space-y-2 text-base font-semibold text-slate-700">
-              <li>• Bé đứng chính diện trước camera laptop khoảng 0.8m – 1.5m (hệ thống tự nhận diện bạn đứng gần nhất, không bị nhiễu các bạn xếp hàng phía sau).</li>
+          <div className="max-w-lg rounded-3xl border-4 border-blue-500 bg-white p-5 sm:p-7 shadow-2xl">
+            <h3 className="font-heading text-2xl sm:text-3xl font-extrabold text-blue-900">Hướng dẫn Chặng 2</h3>
+            <ul className="mt-3 space-y-2 text-sm sm:text-base font-semibold text-slate-700">
+              <li>• Bé đưa khuôn mặt vào giữa camera trước của điện thoại, iPad hoặc laptop.</li>
               <li>• Nghiêng đầu sang <strong>TRÁI</strong> (thẻ xanh) hoặc sang <strong>PHẢI</strong> (thẻ hồng) và giữ nhẹ khoảng nửa giây để chốt đáp án.</li>
-              <li>• <strong>Dự phòng:</strong> Cô giáo hoặc bé cũng có thể bấm phím mũi tên <code>⬅</code> / <code>➡</code> hoặc chạm trực tiếp lên thẻ đáp án.</li>
+              <li>• <strong>Chạm trực tiếp:</strong> Trên điện thoại, iPad hoặc màn hình cảm ứng, bé cũng có thể chạm tay trực tiếp vào 2 thẻ đáp án hai bên!</li>
             </ul>
             <button
               type="button"
               onClick={() => setShowGuide(false)}
-              className="mt-6 w-full cursor-pointer rounded-2xl bg-blue-600 py-3 font-heading text-xl font-bold text-white hover:bg-blue-500"
+              className="mt-5 sm:mt-6 w-full cursor-pointer rounded-2xl bg-blue-600 py-3 font-heading text-lg sm:text-xl font-bold text-white hover:bg-blue-500"
             >
               Đã hiểu, quay lại chơi!
             </button>
@@ -684,65 +688,65 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
         </div>
       )}
 
-      {/* Bottom Dock (Matches Video UI: Camera | Chơi lại | Câu tiếp | Chỉnh sửa | Tải game | Câu X/10) */}
-      <footer className="relative z-20 mx-auto flex flex-wrap items-center justify-center gap-2.5 rounded-2xl border-2 border-white bg-white/95 px-5 py-2 shadow-lg">
+      {/* Bottom Dock */}
+      <footer className="relative z-20 mx-auto flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5 rounded-2xl border-2 border-white bg-white/95 px-2.5 py-1.5 sm:px-5 sm:py-2 shadow-lg">
         <button
           type="button"
           onClick={() => setCameraEnabled((c) => !c)}
-          className={`flex cursor-pointer items-center gap-1.5 rounded-xl px-4 py-2 font-heading text-base font-bold text-white transition ${
+          className={`flex cursor-pointer items-center gap-1 rounded-xl px-2.5 py-1.5 sm:px-4 sm:py-2 font-heading text-xs sm:text-base font-bold text-white transition ${
             cameraEnabled ? 'bg-blue-600 hover:bg-blue-500' : 'bg-slate-600 hover:bg-slate-500'
           }`}
         >
           {cameraEnabled ? <Camera className="h-4 w-4" /> : <CameraOff className="h-4 w-4" />}
-          {cameraEnabled ? 'Camera đã bật' : 'Bật Camera'}
+          <span>{cameraEnabled ? 'Camera: Bật' : 'Bật Camera'}</span>
         </button>
 
         <button
           type="button"
           onClick={handleRestartQuiz}
-          className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 font-heading text-base font-bold text-white transition hover:bg-emerald-500"
+          className="flex cursor-pointer items-center gap-1 rounded-xl bg-emerald-600 px-2.5 py-1.5 sm:px-4 sm:py-2 font-heading text-xs sm:text-base font-bold text-white transition hover:bg-emerald-500"
         >
           <RotateCcw className="h-4 w-4" />
-          Chơi lại
+          <span>Chơi lại</span>
         </button>
 
         <button
           type="button"
           onClick={handleSkipNext}
-          className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-sky-600 px-4 py-2 font-heading text-base font-bold text-white transition hover:bg-sky-500"
+          className="flex cursor-pointer items-center gap-1 rounded-xl bg-sky-600 px-2.5 py-1.5 sm:px-4 sm:py-2 font-heading text-xs sm:text-base font-bold text-white transition hover:bg-sky-500"
         >
           <SkipForward className="h-4 w-4" />
-          Câu tiếp
+          <span>Câu tiếp</span>
         </button>
 
         <button
           type="button"
           onClick={onOpenEditor}
-          className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-purple-600 px-4 py-2 font-heading text-base font-bold text-white transition hover:bg-purple-500"
+          className="hidden sm:flex cursor-pointer items-center gap-1.5 rounded-xl bg-purple-600 px-3.5 py-2 font-heading text-sm sm:text-base font-bold text-white transition hover:bg-purple-500"
         >
           <Edit3 className="h-4 w-4" />
-          Chỉnh sửa
+          <span>Chỉnh sửa</span>
         </button>
 
         <button
           type="button"
           onClick={onOpenVoiceSettings}
-          className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-indigo-600 px-3.5 py-2 font-heading text-base font-bold text-white transition hover:bg-indigo-500"
+          className="flex cursor-pointer items-center gap-1 rounded-xl bg-indigo-600 px-2.5 py-1.5 sm:px-3.5 sm:py-2 font-heading text-xs sm:text-base font-bold text-white transition hover:bg-indigo-500"
         >
           <Sliders className="h-4 w-4" />
-          Giọng nói
+          <span className="hidden md:inline">Giọng nói</span>
         </button>
 
         <button
           type="button"
           onClick={onExportHtml}
-          className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-orange-500 px-4 py-2 font-heading text-base font-bold text-white transition hover:bg-orange-400"
+          className="hidden lg:flex cursor-pointer items-center gap-1.5 rounded-xl bg-orange-500 px-4 py-2 font-heading text-base font-bold text-white transition hover:bg-orange-400"
         >
           <Download className="h-4 w-4" />
-          Tải game
+          <span>Tải game</span>
         </button>
 
-        <span className="px-2 font-heading text-base font-extrabold text-slate-800">
+        <span className="px-1.5 font-heading text-xs sm:text-base font-extrabold text-slate-800">
           Câu {qIndex + 1}/{questions.length}
         </span>
 
@@ -752,9 +756,9 @@ export const Stage2HeadTilt: React.FC<Stage2HeadTiltProps> = ({
             audioManager.stopSpeaking();
             onNextStage();
           }}
-          className="flex cursor-pointer items-center gap-1 rounded-xl bg-pink-600 px-3.5 py-2 font-heading text-base font-bold text-white transition hover:bg-pink-500"
+          className="flex cursor-pointer items-center gap-1 rounded-xl bg-pink-600 px-2.5 py-1.5 sm:px-3.5 sm:py-2 font-heading text-xs sm:text-base font-bold text-white transition hover:bg-pink-500"
         >
-          Chặng 3
+          <span>Chặng 3</span>
           <ArrowRight className="h-4 w-4" />
         </button>
       </footer>

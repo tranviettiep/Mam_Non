@@ -7,13 +7,16 @@ import {
 } from './data/lessons';
 import { audioManager } from './utils/audio';
 import { exportStandaloneGameHtml } from './utils/exportHtml';
+import { PwaInstallState, pwaManager } from './utils/pwa';
 import { SecretCallScreen } from './components/SecretCallScreen';
 import { HubScreen } from './components/HubScreen';
 import { Stage1Runner } from './components/Stage1Runner';
 import { Stage2HeadTilt } from './components/Stage2HeadTilt';
 import { Stage3Tracing } from './components/Stage3Tracing';
+import { Stage4AppleHarvest } from './components/Stage4AppleHarvest';
 import { LessonEditorModal } from './components/LessonEditorModal';
 import { VoiceSettingsModal } from './components/VoiceSettingsModal';
+import { InstallAppModal } from './components/InstallAppModal';
 
 export const App: React.FC = () => {
   const [lesson, setLesson] = useState<LessonConfig>(() => loadInitialLesson());
@@ -21,9 +24,11 @@ export const App: React.FC = () => {
   const [voiceSettings, setVoiceSettings] = useState<VoiceSettings>(() =>
     audioManager.getSettings()
   );
+  const [pwaState, setPwaState] = useState<PwaInstallState>(() => pwaManager.getState());
   const [editorOpen, setEditorOpen] = useState(false);
   const [editorInitialTab, setEditorInitialTab] = useState<EditorTab>('general');
   const [voiceModalOpen, setVoiceModalOpen] = useState(false);
+  const [installModalOpen, setInstallModalOpen] = useState(false);
 
   const openEditorOnTab = (tab: EditorTab) => {
     setEditorInitialTab(tab);
@@ -31,9 +36,16 @@ export const App: React.FC = () => {
   };
 
   useEffect(() => {
-    return audioManager.subscribe((next) => {
+    const unsubAudio = audioManager.subscribe((next) => {
       setVoiceSettings(next);
     });
+    const unsubPwa = pwaManager.subscribe((next) => {
+      setPwaState(next);
+    });
+    return () => {
+      unsubAudio();
+      unsubPwa();
+    };
   }, []);
 
   const handleToggleMute = () => {
@@ -61,13 +73,27 @@ export const App: React.FC = () => {
     handleSaveLesson(merged);
   };
 
+  const handleRequestInstallApp = async () => {
+    audioManager.playClick();
+    if (pwaState.canNativePrompt && !pwaState.isStandalone) {
+      const outcome = await pwaManager.triggerNativeInstall();
+      if (outcome === 'unavailable') {
+        setInstallModalOpen(true);
+      }
+      return;
+    }
+    setInstallModalOpen(true);
+  };
+
   return (
-    <div className="relative h-screen w-screen overflow-hidden select-none">
+    <div className="relative h-full w-full overflow-hidden select-none">
       {screen === 'call' && (
         <SecretCallScreen
           lesson={lesson}
+          pwaState={pwaState}
           onFinishCall={() => setScreen('hub')}
           onOpenVoiceSettings={() => setVoiceModalOpen(true)}
+          onInstallApp={handleRequestInstallApp}
         />
       )}
 
@@ -75,12 +101,14 @@ export const App: React.FC = () => {
         <HubScreen
           lesson={lesson}
           muted={voiceSettings.muted}
+          pwaState={pwaState}
           onToggleMute={handleToggleMute}
           onNavigate={setScreen}
           onSelectPreset={handleSelectPreset}
           onOpenEditor={() => openEditorOnTab('general')}
           onOpenVoiceSettings={() => setVoiceModalOpen(true)}
           onExportHtml={() => exportStandaloneGameHtml(lesson)}
+          onInstallApp={handleRequestInstallApp}
         />
       )}
 
@@ -108,7 +136,16 @@ export const App: React.FC = () => {
         <Stage3Tracing
           lesson={lesson}
           onBackHub={() => setScreen('hub')}
+          onNextStage={() => setScreen('stage4')}
           onOpenEditor={() => openEditorOnTab('tracing')}
+          onOpenVoiceSettings={() => setVoiceModalOpen(true)}
+        />
+      )}
+
+      {screen === 'stage4' && (
+        <Stage4AppleHarvest
+          lesson={lesson}
+          onBackHub={() => setScreen('hub')}
           onOpenVoiceSettings={() => setVoiceModalOpen(true)}
         />
       )}
@@ -128,6 +165,13 @@ export const App: React.FC = () => {
         onChangeSettings={(patch) => audioManager.updateSettings(patch)}
         onResetSettings={() => audioManager.resetSettings()}
         onClose={() => setVoiceModalOpen(false)}
+      />
+
+      <InstallAppModal
+        open={installModalOpen}
+        pwaState={pwaState}
+        lesson={lesson}
+        onClose={() => setInstallModalOpen(false)}
       />
     </div>
   );

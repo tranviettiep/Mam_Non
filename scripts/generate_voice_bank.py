@@ -31,6 +31,7 @@ _SSL_CTX = ssl.create_default_context(cafile=certifi.where())
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 LESSONS_TS = ROOT / "src" / "data" / "lessons.ts"
 STROKES_TS = ROOT / "src" / "data" / "strokes.ts"
+GAMES_DATA_TS = ROOT / "src" / "data" / "letterGamesData.ts"
 OUT_TS = ROOT / "src" / "data" / "voiceBank.ts"
 
 VOICE_NAME = "vi-VN-HoaiMyNeural"
@@ -280,6 +281,110 @@ def collect_phrases() -> Tuple[Set[str], Set[str]]:
         teacher_phrases.add(inst_phrase)
         teacher_phrases.add(win_phrase)
         cute_phrases.add(win_phrase)
+
+        # Chặng 5, 6, 7, 8 theo từng nhóm chữ cái
+        teacher_phrases.add(
+            f"Cuốn sách kì diệu! Cô và các bé cùng khám phá cấu tạo chữ {comma_join} nhé!"
+        )
+        win5 = f"Hoan hô! Bé đã giải mã xong cuốn sách kì diệu chữ {and_join}!"
+        teacher_phrases.add(win5)
+        cute_phrases.add(win5)
+
+        teacher_phrases.add(
+            f"Tìm chữ trong hình ảnh! Bé hãy xếp các thẻ tranh có chứa chữ {comma_join} vào đúng cột nhé!"
+        )
+        teacher_phrases.add(
+            f"Bé hãy kéo hoặc chạm thẻ hình ảnh xếp vào đúng cột chữ {comma_join} nhé!"
+        )
+        win7 = f"Hoan hô! Cả lớp đã tìm đúng tất cả hình ảnh chứa chữ {and_join}!"
+        teacher_phrases.add(win7)
+        cute_phrases.add(win7)
+
+        win8 = f"Đôi bàn tay vàng xuất sắc! Bé đã ghi nhớ và viết đẹp tất cả các thẻ chữ {and_join}!"
+        teacher_phrases.add(win8)
+        cute_phrases.add(win8)
+
+        # Thẻ bí ẩn Chặng 8 cho từng nhóm chữ
+        card_seq = []
+        for ch_item in raw_items:
+            card_seq.append((ch_item, False))
+            card_seq.append((ch_item, True))
+        for card_idx, (ch_low, is_up) in enumerate(card_seq[:6], start=1):
+            lbl = f"Chữ {ch_low} in hoa" if is_up else f"Chữ {ch_low} in thường"
+            teacher_phrases.add(
+                f"Thẻ số {card_idx}: {lbl}! Bé hãy ghi nhớ rồi viết từ chấm đỏ trên bảng nhé!"
+            )
+
+    # 8. Chặng 5, 6, 7, 8 dùng chung (từ letterGamesData.ts)
+    if GAMES_DATA_TS.exists():
+        games_src = GAMES_DATA_TS.read_text(encoding="utf-8")
+
+        # Tên các nét rời
+        piece_labels: Dict[str, str] = {}
+        for pm in re.finditer(
+            r"'([a-z0-9-]+)':\s*\{\s*id:\s*'[^']+',\s*label:\s*'([^']+)'", games_src
+        ):
+            piece_labels[pm.group(1)] = pm.group(2)
+            teacher_phrases.add(pm.group(2))
+
+        # Cấu tạo từng chữ & câu hỏi Quizizz cấu tạo nét
+        for lm in re.finditer(
+            r"([a-zăâêôơưđ]):\s*\{\s*letter:\s*'([^']+)',[\s\S]*?structureSummary:\s*'([^']+)',\s*pieces:\s*\[([^\]]+)\]",
+            games_src,
+        ):
+            ch_key = lm.group(2)
+            summary = lm.group(3)
+            raw_pids = [
+                p.strip().strip("'").strip('"')
+                for p in lm.group(4).split(",")
+                if p.strip()
+            ]
+            teacher_phrases.add(summary)
+            teacher_phrases.add(f"Chữ {ch_key} in thường")
+            teacher_phrases.add(f"Chữ {ch_key} in hoa")
+            teacher_phrases.add(f"Chữ {ch_key} viết thường")
+            teacher_phrases.add(f"Bé hãy chọn các nét đúng để ghép thành chữ {ch_key} nhé!")
+            teacher_phrases.add(f"Đâu là chữ {ch_key} viết in hoa?")
+            teacher_phrases.add(f"Từ nào dưới đây có chứa chữ {ch_key}?")
+            teacher_phrases.add(f"Cột chữ {ch_key}")
+            praise8 = f"Hoan hô đôi bàn tay vàng! Chữ {ch_key} của bé đẹp lắm!"
+            teacher_phrases.add(praise8)
+            cute_phrases.add(praise8)
+
+            p_names = [
+                piece_labels[pid].lower() for pid in raw_pids if pid in piece_labels
+            ]
+            if p_names:
+                desc = (
+                    p_names[0]
+                    if len(p_names) == 1
+                    else f"{', '.join(p_names[:-1])} và {p_names[-1]}"
+                )
+                teacher_phrases.add(f"Chữ cái nào gồm {desc}?")
+
+        # So sánh giống & khác nhau giữa các chữ
+        for cm in re.finditer(
+            r"similarity:\s*'([^']+)',\s*difference:\s*'([^']+)'", games_src
+        ):
+            teacher_phrases.add(f"{cm.group(1)} {cm.group(2)}")
+
+        # Từ vựng tranh Wordwall & câu hỏi điền chữ Quizizz
+        for wm in re.finditer(r"word:\s*'([^']+)',\s*targetLetter:\s*'([^']+)'", games_src):
+            w_text = wm.group(1)
+            teacher_phrases.add(w_text)
+            teacher_phrases.add(
+                f'Trong từ "{w_text}", chữ cái nào còn thiếu ở chỗ trống?'
+            )
+
+    extra_stage_phrases = [
+        "Tuyệt vời! Cả lớp đã giải mã xuất sắc tất cả câu hỏi!",
+        "Nhầm cột rồi, bé nhìn kỹ chữ cái trong từ nhé!",
+        "Đôi bàn tay vàng! Bé hãy bấm lật một thẻ bí ẩn để ghi nhớ chữ cái, rồi đặt bút từ chấm đỏ để viết lại nhé!",
+        "Bé hãy viết chữ lên bảng trắng trước khi khoe bài nhé!",
+    ]
+    for ep in extra_stage_phrases:
+        teacher_phrases.add(ep)
+    cute_phrases.add("Tuyệt vời! Cả lớp đã giải mã xuất sắc tất cả câu hỏi!")
 
     return teacher_phrases, cute_phrases
 

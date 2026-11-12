@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, RotateCcw, Sliders, Star, Volume2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, RotateCcw, Sliders, Star, Volume2 } from 'lucide-react';
 import { LessonConfig } from '../types/lesson';
 import { audioManager } from '../utils/audio';
 import { ConfettiOverlay } from './ConfettiOverlay';
@@ -7,6 +7,7 @@ import { ConfettiOverlay } from './ConfettiOverlay';
 interface Stage4AppleHarvestProps {
   lesson: LessonConfig;
   onBackHub: () => void;
+  onNextStage?: () => void;
   onOpenVoiceSettings: () => void;
 }
 
@@ -312,6 +313,7 @@ const WickerBasketCard: React.FC<{
 export const Stage4AppleHarvest: React.FC<Stage4AppleHarvestProps> = ({
   lesson,
   onBackHub,
+  onNextStage,
   onOpenVoiceSettings,
 }) => {
   const targetLetters = useMemo(() => {
@@ -874,6 +876,21 @@ export const Stage4AppleHarvest: React.FC<Stage4AppleHarvestProps> = ({
                       <RotateCcw className="h-5 w-5" />
                       Chơi lại
                     </button>
+
+                    {onNextStage && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          audioManager.playClick();
+                          audioManager.stopSpeaking();
+                          onNextStage();
+                        }}
+                        className="flex cursor-pointer items-center gap-2 rounded-2xl border-4 border-blue-800 bg-blue-600 px-6 py-2.5 sm:px-7 sm:py-3 font-heading text-lg sm:text-xl font-extrabold text-white shadow-[0_5px_0_#1E3A8A] hover:bg-blue-500 active:translate-y-0.5"
+                      >
+                        <span>Sang Chặng 5</span>
+                        <ArrowRight className="h-5 w-5" />
+                      </button>
+                    )}
 
                     <button
                       type="button"

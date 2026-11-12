@@ -14,6 +14,10 @@ import { Stage1Runner } from './components/Stage1Runner';
 import { Stage2HeadTilt } from './components/Stage2HeadTilt';
 import { Stage3Tracing } from './components/Stage3Tracing';
 import { Stage4AppleHarvest } from './components/Stage4AppleHarvest';
+import { Stage5MagicBook } from './components/Stage5MagicBook';
+import { Stage6QuizizzGame } from './components/Stage6QuizizzGame';
+import { Stage7WordwallSort } from './components/Stage7WordwallSort';
+import { Stage8MemoryWrite } from './components/Stage8MemoryWrite';
 import { LessonEditorModal } from './components/LessonEditorModal';
 import { VoiceSettingsModal } from './components/VoiceSettingsModal';
 import { InstallAppModal } from './components/InstallAppModal';
@@ -144,6 +148,42 @@ export const App: React.FC = () => {
 
       {screen === 'stage4' && (
         <Stage4AppleHarvest
+          lesson={lesson}
+          onBackHub={() => setScreen('hub')}
+          onNextStage={() => setScreen('stage5')}
+          onOpenVoiceSettings={() => setVoiceModalOpen(true)}
+        />
+      )}
+
+      {screen === 'stage5' && (
+        <Stage5MagicBook
+          lesson={lesson}
+          onBackHub={() => setScreen('hub')}
+          onNextStage={() => setScreen('stage6')}
+          onOpenVoiceSettings={() => setVoiceModalOpen(true)}
+        />
+      )}
+
+      {screen === 'stage6' && (
+        <Stage6QuizizzGame
+          lesson={lesson}
+          onBackHub={() => setScreen('hub')}
+          onNextStage={() => setScreen('stage7')}
+          onOpenVoiceSettings={() => setVoiceModalOpen(true)}
+        />
+      )}
+
+      {screen === 'stage7' && (
+        <Stage7WordwallSort
+          lesson={lesson}
+          onBackHub={() => setScreen('hub')}
+          onNextStage={() => setScreen('stage8')}
+          onOpenVoiceSettings={() => setVoiceModalOpen(true)}
+        />
+      )}
+
+      {screen === 'stage8' && (
+        <Stage8MemoryWrite
           lesson={lesson}
           onBackHub={() => setScreen('hub')}
           onOpenVoiceSettings={() => setVoiceModalOpen(true)}

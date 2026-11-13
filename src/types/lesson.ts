@@ -56,7 +56,10 @@ export type ActiveScreen =
   | 'stage5'
   | 'stage6'
   | 'stage7'
-  | 'stage8';
+  | 'stage8'
+  | 'stage9'
+  | 'stage10'
+  | 'stage11';
 
 export type VoicePreset = 'auto_role' | 'teacher_sweet' | 'cartoon_cute' | 'slow_clear';
 

@@ -520,3 +520,29 @@ export function buildQuizizzQuestionsForLesson(lesson: LessonConfig): QuizizzCha
 
   return items.slice(0, 8);
 }
+
+export const ORIGINAL_10_VOWELS = ['o', 'ô', 'ơ', 'a', 'ă', 'â', 'e', 'ê', 'u', 'ư'] as const;
+
+export const PRONUNCIATION_TIPS: Record<string, string> = {
+  e: 'Mở miệng vừa tự nhiên, hai khóe môi hơi kéo nhẹ sang hai bên rồi phát âm tròn tiếng: e.',
+  ê: 'Miệng mở hẹp hơn chữ e một chút, lưỡi hơi nâng lên nhẹ và đọc rõ tiếng: ê.',
+  o: 'Tròn môi thật tự nhiên như hình quả trứng gà rồi đẩy hơi nhẹ ra: o.',
+  ô: 'Chụm tròn môi gọn và hơi đẩy môi ra phía trước rồi đọc vang: ô.',
+  ơ: 'Mở miệng nhẹ nhàng, thả lỏng môi tự nhiên không cần chu tròn rồi đọc: ơ.',
+  a: 'Mở rộng khuôn miệng thật thoải mái, hạ nhẹ hàm dưới và đọc to rõ: a.',
+  ă: 'Mở miệng nhanh và gọn hơn chữ a, đọc dứt khoát âm ngắn: á.',
+  â: 'Mở miệng vừa phải, âm phát ngắn gọn nhẹ nhàng từ giữa khoang miệng: ớ.',
+  u: 'Chu tròn môi nhỏ ra phía trước, đẩy hơi đều nhẹ nhàng và đọc rõ: u.',
+  ư: 'Hơi mỉm nhẹ hai khóe miệng không chu môi, giữ hơi nhẹ trong cổ họng rồi đọc: ư.',
+  b: 'Mím nhẹ hai môi lại rồi bật hơi nhẹ nhàng ra ngoài: bờ.',
+  d: 'Đưa nhẹ đầu lưỡi chạm gần hàm trên, bật âm nhẹ nhàng rõ ràng: giờ.',
+  đ: 'Đặt đầu lưỡi chạm nhẹ mặt sau răng trên rồi bật dứt khoát: đờ.',
+};
+
+export function getPronunciationTip(rawLetter: string): string {
+  const lower = rawLetter.toLocaleLowerCase('vi-VN');
+  return (
+    PRONUNCIATION_TIPS[lower] ??
+    `Bé nhìn kỹ mặt chữ ${lower}, mở khẩu hình miệng tự nhiên và đọc thật to, tròn vành rõ chữ nhé!`
+  );
+}

@@ -7,9 +7,11 @@ import {
   Check,
   Download,
   Edit3,
+  Flower2,
   Footprints,
   LayoutGrid,
   Maximize2,
+  Music,
   Palette,
   PenTool,
   PhoneCall,
@@ -18,6 +20,7 @@ import {
   Sliders,
   Smartphone,
   Sparkles,
+  Sun,
   Volume2,
   VolumeX,
 } from 'lucide-react';
@@ -233,6 +236,63 @@ export const HubScreen: React.FC<HubScreenProps> = ({
       descCls: 'text-purple-900/85',
       btnCls: 'border-purple-800 bg-purple-600 shadow-[0_3px_0_#581C87] group-hover:bg-purple-500',
       icon: <Palette className="h-5 w-5 sm:h-6 sm:w-6" />,
+    },
+    {
+      screen: 'stage9',
+      badge: 'CHẶNG 9',
+      title: 'Vườn Hoa Chữ Cái',
+      desc: (
+        <>
+          Chọn 10 bông hoa đánh số để lật mở và phát âm chữ{' '}
+          <strong className="font-letter">{lettersLabel}</strong> hoặc 10 nguyên âm!
+        </>
+      ),
+      cardCls:
+        'border-rose-500 bg-gradient-to-b from-rose-50 to-pink-100 shadow-[0_6px_0_#E11D48] hover:shadow-[0_9px_0_#E11D48]',
+      badgeCls: 'bg-rose-500',
+      iconBoxCls: 'border-rose-200 bg-rose-500 text-white',
+      titleCls: 'text-rose-950',
+      descCls: 'text-rose-900/85',
+      btnCls: 'border-rose-700 bg-rose-500 shadow-[0_3px_0_#9F1239] group-hover:bg-rose-400',
+      icon: <Flower2 className="h-5 w-5 sm:h-6 sm:w-6" />,
+    },
+    {
+      screen: 'stage10',
+      badge: 'CHẶNG 10',
+      title: 'Vũ Điệu Bạn Chữ',
+      desc: (
+        <>
+          Vui múa cùng nhân vật hoạt hình 3D chữ{' '}
+          <strong className="font-letter">{lettersLabel}</strong> với 4 điệu nhảy sôi động!
+        </>
+      ),
+      cardCls:
+        'border-cyan-600 bg-gradient-to-b from-cyan-50 to-sky-100 shadow-[0_6px_0_#0284C7] hover:shadow-[0_9px_0_#0284C7]',
+      badgeCls: 'bg-cyan-600',
+      iconBoxCls: 'border-cyan-200 bg-sky-500 text-white',
+      titleCls: 'text-sky-950',
+      descCls: 'text-sky-900/85',
+      btnCls: 'border-sky-800 bg-sky-600 shadow-[0_3px_0_#075985] group-hover:bg-sky-500',
+      icon: <Music className="h-5 w-5 sm:h-6 sm:w-6" />,
+    },
+    {
+      screen: 'stage11',
+      badge: 'CHẶNG 11',
+      title: 'Bảng Vàng Phát Âm',
+      desc: (
+        <>
+          Luyện khẩu hình, đọc đồng thanh theo nhịp 1–2–3 cùng bảng chữ{' '}
+          <strong className="font-letter">{lettersLabel}</strong> nổi 3D!
+        </>
+      ),
+      cardCls:
+        'border-yellow-500 bg-gradient-to-b from-amber-50 to-yellow-100 shadow-[0_6px_0_#CA8A04] hover:shadow-[0_9px_0_#CA8A04]',
+      badgeCls: 'bg-amber-500',
+      iconBoxCls: 'border-yellow-200 bg-amber-400 text-amber-950',
+      titleCls: 'text-amber-950',
+      descCls: 'text-amber-900/85',
+      btnCls: 'border-amber-700 bg-amber-500 shadow-[0_3px_0_#92400E] group-hover:bg-amber-400',
+      icon: <Sun className="h-5 w-5 sm:h-6 sm:w-6" />,
     },
   ];
 

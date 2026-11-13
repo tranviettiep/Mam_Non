@@ -386,6 +386,51 @@ def collect_phrases() -> Tuple[Set[str], Set[str]]:
         teacher_phrases.add(ep)
     cute_phrases.add("Tuyệt vời! Cả lớp đã giải mã xuất sắc tất cả câu hỏi!")
 
+    # 9. Chặng 9, 10, 11 (Vườn Hoa Chữ Cái, Vũ Điệu Bạn Chữ, Bảng Vàng Phát Âm)
+    stage9_11_teacher = [
+        "Vườn hoa chữ cái! Bé hãy chọn một bông hoa mang số để khám phá chữ cái bí mật nhé!",
+        "Hoan hô! Vườn hoa chữ cái đã nở rộ rực rỡ rồi, cả lớp giỏi quá!",
+        "Vũ điệu bạn chữ! Bé hãy chọn các điệu nhảy vui nhộn và đọc vang cùng bạn chữ cái nhé!",
+        "Tuyệt vời! Cả lớp đọc to và rõ quá, tớ khen cả lớp mình nhé!",
+        "Tạm biệt các bạn nhỏ đáng yêu! Nhớ gọi đúng tên tớ nhé!",
+        "Bảng vàng phát âm! Các bé nhìn lên bảng và phát âm thật to, tròn vành rõ chữ cùng cô nhé!",
+        "Giỏi quá! Cả lớp phát âm chuẩn và to rõ lắm!",
+    ]
+    stage9_11_cute = [
+        "Hoan hô! Vườn hoa chữ cái đã nở rộ rực rỡ rồi, cả lớp giỏi quá!",
+        "Tuyệt vời! Cả lớp đọc to và rõ quá, tớ khen cả lớp mình nhé!",
+        "Tạm biệt các bạn nhỏ đáng yêu! Nhớ gọi đúng tên tớ nhé!",
+        "Giỏi quá! Cả lớp phát âm chuẩn và to rõ lắm!",
+    ]
+    for p in stage9_11_teacher:
+        teacher_phrases.add(p)
+    for p in stage9_11_cute:
+        cute_phrases.add(p)
+
+    preset_letters_13 = ["e", "ê", "o", "ô", "ơ", "a", "ă", "â", "u", "ư", "b", "d", "đ"]
+    for ch in preset_letters_13:
+        hi_line = f"Xin chào các bạn nhỏ! Tớ là chữ {ch} đây!"
+        hooray_line = f"Cùng dang hai tay và đọc vang chữ {ch} với tớ nào!"
+        model_line = f"Phát âm chữ {ch}: {ch}!"
+        choral_line = f"Cả lớp đọc to: Chữ {ch}!"
+        teacher_phrases.add(hi_line)
+        cute_phrases.add(hi_line)
+        teacher_phrases.add(hooray_line)
+        cute_phrases.add(hooray_line)
+        teacher_phrases.add(model_line)
+        teacher_phrases.add(choral_line)
+        cute_phrases.add(choral_line)
+
+    if GAMES_DATA_TS.exists():
+        games_src = GAMES_DATA_TS.read_text(encoding="utf-8")
+        tips_block = re.search(
+            r"PRONUNCIATION_TIPS:\s*Record<string,\s*string>\s*=\s*\{([\s\S]*?)\};",
+            games_src,
+        )
+        if tips_block:
+            for tm in re.finditer(r":\s*'([^']+)'", tips_block.group(1)):
+                teacher_phrases.add(tm.group(1))
+
     return teacher_phrases, cute_phrases
 
 

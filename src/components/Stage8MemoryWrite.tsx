@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowLeft,
+  ArrowRight,
   Check,
   Eraser,
   Eye,
@@ -22,6 +23,7 @@ import { ConfettiOverlay } from './ConfettiOverlay';
 interface Stage8MemoryWriteProps {
   lesson: LessonConfig;
   onBackHub: () => void;
+  onNextStage?: () => void;
   onOpenVoiceSettings: () => void;
 }
 
@@ -95,6 +97,7 @@ function buildMysteryDeck(targetLetters: string[]): MysteryCard[] {
 export const Stage8MemoryWrite: React.FC<Stage8MemoryWriteProps> = ({
   lesson,
   onBackHub,
+  onNextStage,
   onOpenVoiceSettings,
 }) => {
   const targetLetters = useMemo(() => {
@@ -343,6 +346,21 @@ export const Stage8MemoryWrite: React.FC<Stage8MemoryWriteProps> = ({
           >
             <Sliders className="h-5 w-5" />
           </button>
+
+          {onNextStage && (
+            <button
+              type="button"
+              onClick={() => {
+                audioManager.playClick();
+                audioManager.stopSpeaking();
+                onNextStage();
+              }}
+              className="flex min-h-[44px] cursor-pointer items-center gap-1 rounded-2xl border-3 border-emerald-700 bg-emerald-500 px-3 py-1.5 font-heading text-xs sm:text-sm font-extrabold text-white shadow-[0_4px_0_#047857] hover:bg-emerald-400"
+            >
+              <span className="hidden sm:inline">Chặng 9</span>
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </header>
 
@@ -704,17 +722,33 @@ export const Stage8MemoryWrite: React.FC<Stage8MemoryWriteProps> = ({
                         Mở thẻ tiếp theo!
                       </button>
                     ) : (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          audioManager.playClick();
-                          audioManager.stopSpeaking();
-                          onBackHub();
-                        }}
-                        className="cursor-pointer rounded-xl border-2 border-blue-800 bg-blue-600 px-5 py-2 font-heading text-sm sm:text-base font-extrabold text-white shadow-[0_3px_0_#1E3A8A] hover:bg-blue-500"
-                      >
-                        Hoàn thành toàn bộ!
-                      </button>
+                      <div className="flex flex-wrap justify-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            audioManager.playClick();
+                            audioManager.stopSpeaking();
+                            onBackHub();
+                          }}
+                          className="cursor-pointer rounded-xl border-2 border-blue-800 bg-blue-600 px-5 py-2 font-heading text-sm sm:text-base font-extrabold text-white shadow-[0_3px_0_#1E3A8A] hover:bg-blue-500"
+                        >
+                          Hoàn thành toàn bộ!
+                        </button>
+                        {onNextStage && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              audioManager.playClick();
+                              audioManager.stopSpeaking();
+                              onNextStage();
+                            }}
+                            className="flex cursor-pointer items-center gap-1.5 rounded-xl border-2 border-emerald-700 bg-emerald-500 px-5 py-2 font-heading text-sm sm:text-base font-extrabold text-white shadow-[0_3px_0_#047857] hover:bg-emerald-400"
+                          >
+                            <span>Sang Chặng 9</span>
+                            <ArrowRight className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>

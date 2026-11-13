@@ -18,6 +18,9 @@ import { Stage5MagicBook } from './components/Stage5MagicBook';
 import { Stage6QuizizzGame } from './components/Stage6QuizizzGame';
 import { Stage7WordwallSort } from './components/Stage7WordwallSort';
 import { Stage8MemoryWrite } from './components/Stage8MemoryWrite';
+import { Stage9FlowerGarden } from './components/Stage9FlowerGarden';
+import { Stage10LetterDance } from './components/Stage10LetterDance';
+import { Stage11PronunciationBoard } from './components/Stage11PronunciationBoard';
 import { LessonEditorModal } from './components/LessonEditorModal';
 import { VoiceSettingsModal } from './components/VoiceSettingsModal';
 import { InstallAppModal } from './components/InstallAppModal';
@@ -184,6 +187,33 @@ export const App: React.FC = () => {
 
       {screen === 'stage8' && (
         <Stage8MemoryWrite
+          lesson={lesson}
+          onBackHub={() => setScreen('hub')}
+          onNextStage={() => setScreen('stage9')}
+          onOpenVoiceSettings={() => setVoiceModalOpen(true)}
+        />
+      )}
+
+      {screen === 'stage9' && (
+        <Stage9FlowerGarden
+          lesson={lesson}
+          onBackHub={() => setScreen('hub')}
+          onNextStage={() => setScreen('stage10')}
+          onOpenVoiceSettings={() => setVoiceModalOpen(true)}
+        />
+      )}
+
+      {screen === 'stage10' && (
+        <Stage10LetterDance
+          lesson={lesson}
+          onBackHub={() => setScreen('hub')}
+          onNextStage={() => setScreen('stage11')}
+          onOpenVoiceSettings={() => setVoiceModalOpen(true)}
+        />
+      )}
+
+      {screen === 'stage11' && (
+        <Stage11PronunciationBoard
           lesson={lesson}
           onBackHub={() => setScreen('hub')}
           onOpenVoiceSettings={() => setVoiceModalOpen(true)}

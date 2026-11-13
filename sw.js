@@ -1,4 +1,4 @@
-const CACHE_NAME = 'san-choi-chu-cai-pwa-v4';
+const CACHE_NAME = 'san-choi-chu-cai-pwa-v5';
 const SHELL_ASSETS = [
   './manifest.webmanifest',
   './icons/favicon-64.png',

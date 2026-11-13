@@ -247,6 +247,24 @@ class ClassroomAudioManager {
     this.playTone(987.77, 0.1, 0.24, 'triangle', 0.2);
   }
 
+  public playPop(): void {
+    this.playTone(520, 0, 0.08, 'sine', 0.15);
+    this.playTone(784, 0.05, 0.16, 'triangle', 0.17);
+  }
+
+  public playDanceBeat(moveIdx = 0): void {
+    const patterns: number[][] = [
+      [523.25, 659.25, 783.99],
+      [587.33, 783.99, 987.77],
+      [659.25, 783.99, 1046.5],
+      [523.25, 783.99, 659.25],
+    ];
+    const notes = patterns[((moveIdx % patterns.length) + patterns.length) % patterns.length];
+    notes.forEach((freq, idx) => {
+      this.playTone(freq, idx * 0.075, 0.14, 'triangle', 0.16);
+    });
+  }
+
   public playCelebration(): void {
     const melody = [
       { f: 523.25, t: 0, d: 0.14 },

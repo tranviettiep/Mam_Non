@@ -237,7 +237,7 @@ export const HubScreen: React.FC<HubScreenProps> = ({
   ];
 
   return (
-    <div className="safe-pad relative flex h-full w-full flex-col justify-between overflow-y-auto xl:overflow-hidden bg-gradient-to-b from-sky-400 via-sky-100 to-emerald-100 px-3 py-2 sm:px-5 sm:py-2.5">
+    <div className="hub-scroll absolute inset-0 overflow-y-auto overflow-x-hidden bg-gradient-to-b from-sky-400 via-sky-100 to-emerald-100">
       {/* Decorative Space/Playground Backdrop */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
         <div className="absolute -left-16 top-10 h-40 w-80 rounded-full bg-white/65 blur-md" />
@@ -245,8 +245,9 @@ export const HubScreen: React.FC<HubScreenProps> = ({
         <div className="absolute -bottom-24 left-1/2 h-52 w-[120%] -translate-x-1/2 rounded-[100%] bg-emerald-300/50" />
       </div>
 
-      {/* Header Banner (School + Title + Class + Preset Switcher) */}
-      <header className="relative z-10 flex flex-col items-center">
+      <div className="hub-safe-inner relative z-10 mx-auto flex min-h-full w-full max-w-7xl flex-col justify-between gap-2.5 sm:gap-3">
+        {/* Header Banner (School + Title + Class + Preset Switcher) */}
+        <header className="shrink-0 flex flex-col items-center">
         <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
           <div className="rounded-full border-3 border-amber-400 bg-amber-50 px-3.5 py-0.5 sm:px-6 sm:py-1 shadow-[0_3px_0_rgba(217,119,6,0.3)]">
             <span className="font-heading text-xs sm:text-base md:text-xl font-extrabold tracking-wide text-blue-900">
@@ -310,15 +311,15 @@ export const HubScreen: React.FC<HubScreenProps> = ({
         </div>
       </header>
 
-      {/* 8 Main Stage Cards (2x4 Claymorphism Grid on TV/Desktop, 2x4 on iPad, 1 col Mobile) */}
-      <main className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 min-h-0 grid-cols-1 content-center gap-2.5 py-2 sm:grid-cols-2 xl:grid-cols-4 xl:gap-3.5 2xl:gap-4">
-        {stageCards.map((st, idx) => (
-          <button
-            key={st.screen}
-            type="button"
-            onClick={() => enterStage(st.screen)}
-            className={`group flex cursor-pointer flex-col justify-between rounded-[24px] border-4 p-3 sm:p-3.5 2xl:p-4 text-left transition duration-150 hover:-translate-y-0.5 active:translate-y-0.5 ${st.cardCls}`}
-          >
+        {/* 8 Main Stage Cards (2x4 Claymorphism Grid on TV/Desktop, 2x4 on iPad, 1 col Mobile) */}
+        <main className="my-auto grid w-full shrink-0 grid-cols-1 gap-3 py-1 sm:grid-cols-2 xl:grid-cols-4 xl:gap-3.5 2xl:gap-4">
+          {stageCards.map((st, idx) => (
+            <button
+              key={st.screen}
+              type="button"
+              onClick={() => enterStage(st.screen)}
+              className={`group flex touch-manipulation cursor-pointer flex-col justify-between rounded-[24px] border-4 p-3 sm:p-3.5 2xl:p-4 text-left transition duration-150 hover:-translate-y-0.5 active:translate-y-0.5 ${st.cardCls}`}
+            >
             <div>
               <div className="flex items-center justify-between">
                 <span
@@ -354,8 +355,8 @@ export const HubScreen: React.FC<HubScreenProps> = ({
         ))}
       </main>
 
-      {/* Bottom Teacher & Device Control Dock */}
-      <footer className="relative z-10 mx-auto flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 rounded-2xl border-2 border-white bg-white/92 px-3 py-1.5 sm:px-4 sm:py-2 shadow-md backdrop-blur">
+        {/* Bottom Teacher & Device Control Dock */}
+        <footer className="shrink-0 mx-auto flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 rounded-2xl border-2 border-white bg-white/92 px-3 py-2 sm:px-4 shadow-md backdrop-blur">
         <button
           type="button"
           onClick={() => onNavigate('call')}
@@ -433,7 +434,8 @@ export const HubScreen: React.FC<HubScreenProps> = ({
           <Maximize2 className="h-4 w-4" />
           <span>Toàn màn hình</span>
         </button>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 };
